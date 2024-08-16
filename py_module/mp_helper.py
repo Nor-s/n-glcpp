@@ -4,7 +4,8 @@ import glm
 import math
 import matplotlib
 import os
-from .mixamo import Mixamo
+from .mp_manager import POSE_LANDMARK
+from .mixamo_data import Mixamo, MIXAMO_DATA, post_process_mixamo_landmark
 from .model_node import ModelNode, json_to_glm_vec, json_to_glm_quat, calc_transform
 # from .one_euro_filter import OneEuroFilter
 import copy
@@ -135,57 +136,11 @@ def get_name_idx_map():
     return name_idx_map
 
 
-
-# [Mixamo name, idx, parent_idx, mediapipe name]
-def get_mixamo_names():
-    return [
-        ['Hips', 0, -1],  # left hip <->right hip
-        ['Spine', 1, 0],
-        ['Spine1', 2, 1],
-        ['Spine2', 3, 2],
-
-        ['Neck', 4, 3],  # left_shoulder <-> right_shoulder
-        ['Head', 5, 4],  # left_ear <-> right_ear
-
-        ['LeftArm', 6, 3, "left_shoulder"],
-        ['LeftForeArm', 7, 6, "left_elbow"],
-        ['LeftHand', 8, 7, "left_wrist"],
-        ['LeftHandThumb1', 9, 8, "left_thumb"],
-        ['LeftHandIndex1', 10, 8, "left_index"],
-        ['LeftHandPinky1', 11, 8, "left_pinky"],
-
-        ['RightArm', 12, 3, "right_shoulder"],
-        ['RightForeArm', 13, 12, "right_elbow"],
-        ['RightHand', 14, 13, "right_wrist"],
-        ['RightHandThumb1', 15, 14, "right_thumb"],
-        ['RightHandIndex1', 16, 14, "right_index"],
-        ['RightHandPinky1', 17, 14, "right_pinky"],
-
-        ['LeftUpLeg', 18, 0, "left_hip"],
-        ['LeftLeg', 19, 18, "left_knee"],
-        ['LeftFoot', 20, 19, "left_ankle"],
-        ['LeftToeBase', 21, 20, "left_foot_index"],
-
-        ['RightUpLeg', 22, 0, "right_hip"],
-        ['RightLeg', 23, 22, "right_knee"],
-        ['RightFoot', 24, 23, "right_ankle"],
-        ['RightToeBase', 25, 24, "right_foot_index"]
-    ]
-
-
 def get_mixamo_name_idx_map():
-    mixamo_names = get_mixamo_names()
     mixamo_name_idx_map = {}
-    for name in mixamo_names:
-        mixamo_name_idx_map[name[0]] = name[1]
+    for data in MIXAMO_DATA:
+        mixamo_name_idx_map[data.name] = data.value 
     return mixamo_name_idx_map
-
-def get_mixamo_name_mediapipe_name_map():
-    mm_name_mp_name_map = {}
-    mixamo_names = get_mixamo_names()
-    for idx in range(6, len(mixamo_names)):
-        mm_name_mp_name_map[mixamo_names[idx][0]] = mixamo_names[idx][3]
-    return mm_name_mp_name_map
 
 def init_bindpose(bindpose_json, model_json):
     '''
@@ -265,17 +220,6 @@ def mediapipe_to_mixamo2(mp_manager,
                          mixamo_bindingpose_json,
                          mixamo_bindingpose_root_node,
                          time_factor):
-    # init dicts
-    mp_name_idx_map = get_name_idx_map()
-    mm_mp_map = get_mixamo_name_mediapipe_name_map()
-    mm_name_idx_map = get_mixamo_name_idx_map()
-    mp_idx_mm_idx_map = dict()
-    for mm_name in mm_mp_map.keys():
-        mp_name = mm_mp_map[mm_name]
-        mp_idx = mp_name_idx_map[mp_name]
-        mm_idx = mm_name_idx_map[mm_name]
-        mp_idx_mm_idx_map[mp_idx] = mm_idx
-
     # for hips move var
     _, model_right_up_leg = find_model_json(mixamo_bindingpose_json["node"], Mixamo.RightUpLeg.name)
     __, model_right_leg = find_model_json(mixamo_bindingpose_json["node"], Mixamo.RightLeg.name)
@@ -323,7 +267,8 @@ def mediapipe_to_mixamo2(mp_manager,
             height = height2
             width = width2
             cap_image, glm_list, visibility_list, hip2d_left, hip2d_right, leg2d = detect_pose_to_glm_pose(
-                mp_manager, cap_image, mp_idx_mm_idx_map)
+                mp_manager, cap_image)
+            
             if glm_list[0] != None:
                 time =  math.floor(frame_num*time_factor)
                 # if one_euro_filter == None:
@@ -400,7 +345,7 @@ def mediapipe_to_mixamo2(mp_manager,
             cv2.destroyAllWindows()
 
 
-def detect_pose_to_glm_pose(mp_manager, image, mp_idx_mm_idx_map):
+def detect_pose_to_glm_pose(mp_manager, image):
     # Create a copy of the input image.
     output_image = image.copy()
 
@@ -422,57 +367,22 @@ def detect_pose_to_glm_pose(mp_manager, image, mp_idx_mm_idx_map):
     if results.pose_world_landmarks:
         landmark = results.pose_world_landmarks.landmark
 
-        glm_list[Mixamo.Hips] = avg_vec3(
-            landmark[mp_manager.mp_pose.PoseLandmark.LEFT_HIP], landmark[mp_manager.mp_pose.PoseLandmark.RIGHT_HIP])
-        visibility_list[Mixamo.Hips] = (landmark[mp_manager.mp_pose.PoseLandmark.LEFT_HIP].visibility +
-                                        landmark[mp_manager.mp_pose.PoseLandmark.RIGHT_HIP].visibility)*0.5
-        glm_list[Mixamo.Neck] = avg_vec3(
-            landmark[mp_manager.mp_pose.PoseLandmark.LEFT_SHOULDER], landmark[mp_manager.mp_pose.PoseLandmark.RIGHT_SHOULDER])
-        visibility_list[Mixamo.Neck] = (landmark[mp_manager.mp_pose.PoseLandmark.LEFT_SHOULDER].visibility +
-                                        landmark[mp_manager.mp_pose.PoseLandmark.RIGHT_SHOULDER].visibility)*0.5
-        glm_list[Mixamo.Spine1] = avg_vec3(
-            glm_list[Mixamo.Hips], glm_list[Mixamo.Neck])
-        visibility_list[Mixamo.Spine1] = (
-            visibility_list[Mixamo.Hips] + visibility_list[Mixamo.Neck])*0.5
-        glm_list[Mixamo.Spine] = avg_vec3(
-            glm_list[Mixamo.Hips], glm_list[Mixamo.Spine1])
-        visibility_list[Mixamo.Spine] = (
-            visibility_list[Mixamo.Hips] + visibility_list[Mixamo.Spine1])*0.5
-        glm_list[Mixamo.Spine2] = avg_vec3(
-            glm_list[Mixamo.Spine1], glm_list[Mixamo.Neck])
-        visibility_list[Mixamo.Spine2] = (
-            visibility_list[Mixamo.Spine1] + visibility_list[Mixamo.Neck])*0.5
-        glm_list[Mixamo.Head] = avg_vec3(
-            landmark[mp_manager.mp_pose.PoseLandmark.LEFT_EAR], landmark[mp_manager.mp_pose.PoseLandmark.RIGHT_EAR])
-        visibility_list[Mixamo.Head] = (landmark[mp_manager.mp_pose.PoseLandmark.LEFT_EAR].visibility +
-                                        landmark[mp_manager.mp_pose.PoseLandmark.RIGHT_EAR].visibility)*0.5
-
-        glm_list[Mixamo.Spine].y *= -1
-        glm_list[Mixamo.Neck].y *= -1
-        glm_list[Mixamo.Spine1].y *= -1
-        glm_list[Mixamo.Spine2].y *= -1
-        glm_list[Mixamo.Head].y *= -1
-
-        glm_list[Mixamo.Neck].z *= -1
-        glm_list[Mixamo.Spine].z *= -1
-        glm_list[Mixamo.Spine1].z *= -1
-        glm_list[Mixamo.Spine2].z *= -1
-        glm_list[Mixamo.Head].z *= -1
-        for mp_idx in mp_idx_mm_idx_map.keys():
-            mm_idx = mp_idx_mm_idx_map[mp_idx]
-            glm_list[mm_idx] = glm.vec3(
-                landmark[mp_idx].x, -landmark[mp_idx].y, -landmark[mp_idx].z)
-            visibility_list[mm_idx] = landmark[mp_idx].visibility
+        for key in MIXAMO_DATA:
+            (point, visibility) = MIXAMO_DATA[key].mp_to_mixamo(landmark, glm_list, visibility_list)
+            glm_list[key.value] = point
+            visibility_list[key.value] = visibility
+        
+        post_process_mixamo_landmark(glm_list)
 
     # 2d landmarks
     leg2d = None
     if results.pose_landmarks:
         landmark = results.pose_landmarks.landmark
-        hip2d_left.x = landmark[mp_manager.mp_pose.PoseLandmark.LEFT_HIP].x
-        hip2d_left.y = landmark[mp_manager.mp_pose.PoseLandmark.LEFT_HIP].y
-        hip2d_left.z = landmark[mp_manager.mp_pose.PoseLandmark.LEFT_HIP].z
-        hip2d_right = glm.vec3(landmark[mp_manager.mp_pose.PoseLandmark.RIGHT_HIP].x,
-                               landmark[mp_manager.mp_pose.PoseLandmark.RIGHT_HIP].y, landmark[mp_manager.mp_pose.PoseLandmark.RIGHT_HIP].z)
+        hip2d_left.x = landmark[POSE_LANDMARK.LEFT_HIP].x
+        hip2d_left.y = landmark[POSE_LANDMARK.LEFT_HIP].y
+        hip2d_left.z = landmark[POSE_LANDMARK.LEFT_HIP].z
+        hip2d_right = glm.vec3(landmark[POSE_LANDMARK.RIGHT_HIP].x,
+                               landmark[POSE_LANDMARK.RIGHT_HIP].y, landmark[POSE_LANDMARK.RIGHT_HIP].z)
         leg2d = glm.vec3(landmark[26].x, landmark[26].y, landmark[26].z)
         
 

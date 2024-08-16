@@ -1,5 +1,7 @@
 import mediapipe 
 
+POSE_LANDMARK = mediapipe.solutions.pose.PoseLandmark
+
 class MediapipeManager():
     def __init__(self):
         self.mp_pose = mediapipe.solutions.pose

@@ -3,7 +3,7 @@ import copy
 import math
 
 from .gizmo import Gizmo, calc_quat
-from .mixamo import Mixamo
+from .mixamo_data import Mixamo
 
 
 def find_2d_angle(cx, cy, ex, ey):
