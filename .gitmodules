@@ -22,3 +22,6 @@
 	path = external/cpython
 	url = https://github.com/python/cpython.git
 	branch = 3.10
+[submodule "external/hiredis"]
+	path = external/hiredis
+	url = https://github.com/redis/hiredis.git
