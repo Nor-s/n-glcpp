@@ -21,9 +21,11 @@ namespace anim
         T *get_component();
         template <class T>
         T *add_component();
+		void pre_update();
         void update();
-        Entity *find(const std::string &name);
-        Entity *find(Entity *entity, const std::string &name);
+		void post_update();
+		Entity* find(const std::string& name);
+		Entity* find(Entity* entity, const std::string& name);
 
         void set_name(const std::string &name);
         void add_children(std::shared_ptr<Entity> &children);

@@ -12,7 +12,9 @@ namespace anim
     public:
         virtual ~Component() = default;
         virtual TypeID get_type() const = 0;
+		virtual void pre_update() {}
         virtual void update() = 0;
+		virtual void post_update() {}
     };
 
     template <class T>

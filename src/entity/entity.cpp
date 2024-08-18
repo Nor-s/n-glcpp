@@ -6,6 +6,21 @@ namespace anim
 		: name_(name), id_(id), parent_(parent)
 	{
 	}
+	void Entity::pre_update()
+	{
+		if (is_deactivate_)
+		{
+			return;
+		}
+		for (auto& component : components_)
+		{
+			component->pre_update();
+		}
+		for (auto& child : children_)
+		{
+			child->pre_update();
+		}
+	}
 	void Entity::update()
 	{
 		if (is_deactivate_)
@@ -24,6 +39,21 @@ namespace anim
 		for (auto& child : children_)
 		{
 			child->update();
+		}
+	}
+	void Entity::post_update()
+	{
+		if (is_deactivate_)
+		{
+			return;
+		}
+		for (auto& component : components_)
+		{
+			component->post_update();
+		}
+		for (auto& child : children_)
+		{
+			child->post_update();
 		}
 	}
 	Entity* Entity::find(const std::string& name)
