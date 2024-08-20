@@ -12,6 +12,7 @@ from .model_node import ModelNode, json_to_glm_vec, json_to_glm_quat, calc_trans
 # from .one_euro_filter import OneEuroFilter
 import copy
 import numpy as np
+import redis
 
 def smooth_pose(one_euro_filter, pose, time):
     t = np.ones_like(pose) * time
@@ -285,6 +286,9 @@ def mediapipe_to_mixamo2(mp_manager,
                 mixamo_bindingpose_root_node.normalize(glm_list, visibility_list)
                 mixamo_bindingpose_root_node.calc_animation(glm_list, visibility_list=visibility_list)
                 mixamo_bindingpose_root_node.tmp_to_json(bones_json, visibility_list, min_visibility)
+                if mp_manager.redis != None:
+                   bones_data = json.dumps(bones_json["bones"], ensure_ascii=False).encode('utf-8')
+                   mp_manager.redis.set("animation", bones_data)
                 anim_result_json["frames"].append(bones_json)
                 if is_show_result:
                     rg = []
