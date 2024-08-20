@@ -37,24 +37,24 @@ namespace anim
 		LOG("~SharedResources");
 		glDeleteBuffers(1, &matrices_UBO_);
 	}
-	Animator *SharedResources::get_mutable_animator()
+	Animator* SharedResources::get_mutable_animator()
 	{
 		return animator_.get();
 	}
-	std::shared_ptr<Shader> SharedResources::get_mutable_shader(const std::string &name)
+	std::shared_ptr<Shader> SharedResources::get_mutable_shader(const std::string& name)
 	{
 		return shaders_[name];
 	}
-	void SharedResources::import(const char *path, float scale)
+	void SharedResources::import(const char* path, float scale)
 	{
 		Importer import{};
-		import.mScale = scale;
+import.mScale = scale;
 		auto [model, animations] = import.read_file(path);
 
 		add_animations(animations);
 		add_entity(model, path);
 	}
-	void SharedResources::export_animation(Entity *entity, const char *save_path, bool is_linear)
+	void SharedResources::export_animation(Entity* entity, const char* save_path, bool is_linear)
 	{
 		if (entity && entity->get_mutable_root())
 		{
@@ -64,7 +64,7 @@ namespace anim
 		}
 	}
 
-	void SharedResources::add_entity(std::shared_ptr<Model> &model, const char *path)
+	void SharedResources::add_entity(std::shared_ptr<Model>& model, const char* path)
 	{
 		if (!model)
 		{
@@ -80,9 +80,9 @@ namespace anim
 			root_entity_->add_children(entity);
 		}
 	}
-	void SharedResources::add_animations(const std::vector<std::shared_ptr<Animation>> &animations)
+	void SharedResources::add_animations(const std::vector<std::shared_ptr<Animation>>& animations)
 	{
-		for (auto &animation : animations)
+		for (auto& animation : animations)
 		{
 			add_animation(animation);
 		}
@@ -96,7 +96,7 @@ namespace anim
 			animations_.back()->set_id(animations_.size() - 1);
 		}
 	}
-	void SharedResources::add_shader(const std::string &name, const char *vs_path, const char *fs_path)
+	void SharedResources::add_shader(const std::string& name, const char* vs_path, const char* fs_path)
 	{
 		shaders_[name] = std::make_shared<gl::GLShader>(vs_path, fs_path);
 	}
@@ -148,13 +148,13 @@ namespace anim
 
 		glBindBufferRange(GL_UNIFORM_BUFFER, 0, matrices_UBO_, 0, 2 * sizeof(glm::mat4));
 	}
-	void SharedResources::set_ubo_projection(const glm::mat4 &projection)
+	void SharedResources::set_ubo_projection(const glm::mat4& projection)
 	{
 		glBindBuffer(GL_UNIFORM_BUFFER, matrices_UBO_);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
-	void SharedResources::set_ubo_view(const glm::mat4 &view)
+	void SharedResources::set_ubo_view(const glm::mat4& view)
 	{
 		glBindBuffer(GL_UNIFORM_BUFFER, matrices_UBO_);
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
@@ -165,11 +165,11 @@ namespace anim
 		dt_ = dt;
 		animator_->update(dt);
 	}
-	std::shared_ptr<Entity> &SharedResources::get_mutable_entities()
+	std::shared_ptr<Entity>& SharedResources::get_mutable_entities()
 	{
 		return root_entity_;
 	}
-	const std::vector<std::shared_ptr<Animation>> &SharedResources::get_animations() const
+	const std::vector<std::shared_ptr<Animation>>& SharedResources::get_animations() const
 	{
 		return animations_;
 	}
@@ -177,12 +177,12 @@ namespace anim
 
 namespace anim
 {
-	void SharedResources::convert_to_entity(std::shared_ptr<Entity> &entity,
-											std::shared_ptr<Model> &model,
-											const std::shared_ptr<ModelNode> &model_node,
-											Entity *parent_entity, int child_num, Entity *root_entity)
+	void SharedResources::convert_to_entity(std::shared_ptr<Entity>& entity,
+		std::shared_ptr<Model>& model,
+		const std::shared_ptr<ModelNode>& model_node,
+		Entity* parent_entity, int child_num, Entity* root_entity)
 	{
-		const std::string &name = model_node->name;
+		const std::string& name = model_node->name;
 		LOG("- - TO ENTITY: " + name);
 		uint32_t entity_id = single_entity_list_.size();
 		entity.reset(new Entity(name, entity_id, parent_entity));
@@ -212,18 +212,18 @@ namespace anim
 		}
 
 		// find mising bone
-		ArmatureComponent *parent_armature = (parent_entity) ? parent_entity->get_component<ArmatureComponent>() : nullptr;
+		ArmatureComponent* parent_armature = (parent_entity) ? parent_entity->get_component<ArmatureComponent>() : nullptr;
 		auto bone_info = model->get_pointer_bone_info(name);
 		auto bind_pose_transformation = model_node->relative_transformation;
 		entity->set_local(bind_pose_transformation);
 
-		PoseComponent *parent_pose = (parent_armature) ? parent_armature->get_pose() : nullptr;
+		PoseComponent* parent_pose = (parent_armature) ? parent_armature->get_pose() : nullptr;
 		if (parent_armature && !bone_info)
 		{
 			auto parent_offset = parent_armature->get_bone_offset();
 			BoneInfo missing_bone_info{
 				model->bone_count_++,
-				glm::inverse(glm::inverse(parent_offset) * bind_pose_transformation)};
+				glm::inverse(glm::inverse(parent_offset) * bind_pose_transformation) };
 			parent_pose->add_bone(name, missing_bone_info);
 			model->bone_info_map_[name] = missing_bone_info;
 			bone_info = &(model->bone_info_map_[name]);
@@ -232,7 +232,7 @@ namespace anim
 		// armature component
 		if (bone_info)
 		{
-			PoseComponent *pose = parent_pose;
+			PoseComponent* pose = parent_pose;
 			auto armature = entity->add_component<ArmatureComponent>();
 			if (parent_armature)
 			{
@@ -269,7 +269,7 @@ namespace anim
 			armature->selectionColor = entity_id << 8;
 		}
 		int child_size = model_node->childrens.size();
-		auto &children = entity->get_mutable_children();
+		auto& children = entity->get_mutable_children();
 		children.resize(child_size);
 
 		for (int i = 0; i < child_size; i++)
@@ -278,7 +278,7 @@ namespace anim
 			convert_to_entity(children[i], model, model_node->childrens[i], entity.get(), i, root_entity);
 		}
 	}
-	Entity *SharedResources::get_entity(int id)
+	Entity* SharedResources::get_entity(int id)
 	{
 		if (id >= 0 && id < single_entity_list_.size())
 		{
@@ -286,7 +286,7 @@ namespace anim
 		}
 		return nullptr;
 	}
-	Animation *SharedResources::get_mutable_animation(int id)
+	Animation* SharedResources::get_mutable_animation(int id)
 	{
 		if (id >= animations_.size() || id < 0)
 		{
