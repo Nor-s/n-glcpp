@@ -53,7 +53,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 file(COPY resources DESTINATION ${CMAKE_BINARY_DIR}/bin)
-file(COPY py_module DESTINATION ${CMAKE_BINARY_DIR}/bin)
 file(COPY imgui.ini DESTINATION ${CMAKE_BINARY_DIR}/bin)
 file(COPY LICENSE DESTINATION ${CMAKE_BINARY_DIR}/bin)
 
@@ -73,6 +72,7 @@ else()
     file(COPY ${CMAKE_CURRENT_LIST_DIR}/python/python3.dll DESTINATION ${CMAKE_BINARY_DIR}/bin)
   endif()
 endif()
+file(COPY mp_mocap DESTINATION ${CMAKE_BINARY_DIR}/bin/python/Lib/site-packages)
 message("==========================================================")
 
 message("Compiler")
