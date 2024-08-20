@@ -10,32 +10,32 @@
 
 namespace anim
 {
-    class Mesh;
-    class Shader;
-    class Entity;
-    struct MaterialProperties;
-    class MeshComponent : public ComponentBase<MeshComponent>
-    {
-    public:
-        static inline bool isActivate = true;
-        static inline bool isWireframe = false;
-        bool isDynamic{false};
-        uint32_t selectionColor;
+class Mesh;
+class Shader;
+class Entity;
+struct MaterialProperties;
+class MeshComponent : public ComponentBase<MeshComponent>
+{
+public:
+	static inline bool isActivate = true;
+	static inline bool isWireframe = false;
+	bool isDynamic{false};
+	uint32_t selectionColor;
 
-        ~MeshComponent() = default;
-        void update() override;
+	~MeshComponent() = default;
+	void update() override;
 
-        void set_meshes(const std::vector<std::shared_ptr<Mesh>> &meshes);
-        void set_shader(Shader *shader);
-        void set_entity(Entity *entity);
+	void set_meshes(const std::vector<std::shared_ptr<Mesh>>& meshes);
+	void set_shader(Shader* shader);
+	void set_entity(Entity* entity);
 
-        std::vector<MaterialProperties *> get_mutable_mat();
+	std::vector<MaterialProperties*> get_mutable_mat();
 
-    private:
-        std::vector<std::shared_ptr<Mesh>> meshes_;
-        Shader *shader_;
-        Entity *entity_;
-    };
-}
+private:
+	std::vector<std::shared_ptr<Mesh>> meshes_;
+	Shader* shader_;
+	Entity* entity_;
+};
+}	 // namespace anim
 
 #endif

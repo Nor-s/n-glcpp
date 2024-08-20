@@ -57,35 +57,34 @@
 
 namespace anim
 {
-	class JsonUtil
-	{
-	public:
-		static glm::vec3 GetPosition(const Json::Value& bone);
+class JsonUtil
+{
+public:
+	static glm::vec3 GetPosition(const Json::Value& bone);
 
-		static glm::quat GetRotation(const Json::Value& bone);
+	static glm::quat GetRotation(const Json::Value& bone);
 
-		static glm::vec3 GetScale(const Json::Value& bone);
-		static glm::mat4 GetMat(const Json::Value& mat_array);
-	};
-	class JsonAnimation : public Animation
-	{
-	public:
-		JsonAnimation() = delete;
-		JsonAnimation(const char* animation_path);
+	static glm::vec3 GetScale(const Json::Value& bone);
+	static glm::mat4 GetMat(const Json::Value& mat_array);
+};
+class JsonAnimation : public Animation
+{
+public:
+	JsonAnimation() = delete;
+	JsonAnimation(const char* animation_path);
 
-		~JsonAnimation();
+	~JsonAnimation();
 
-		void reload() override;
+	void reload() override;
 
-	private:
-		void destroy();
+private:
+	void destroy();
 
-		void init();
+	void init();
 
-		void process_frames(const Json::Value& frames);
-		void process_bones(const Json::Value& bones, float time);
-		void process_bindpose(const Json::Value& bindpose);
-
-	};
-}
+	void process_frames(const Json::Value& frames);
+	void process_bones(const Json::Value& bones, float time);
+	void process_bindpose(const Json::Value& bindpose);
+};
+}	 // namespace anim
 #endif

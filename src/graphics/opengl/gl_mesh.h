@@ -6,23 +6,26 @@
 
 namespace anim::gl
 {
-    // TODO: Refactor Create function
-    std::unique_ptr<Mesh> CreateBiPyramid();
-    class GLMesh : public anim::Mesh
-    {
-    public:
-        GLMesh(const std::vector<Vertex> &vertices, const std::vector<unsigned int> &indices, const std::vector<Texture> &textures, const MaterialProperties &mat_properties);
-        GLMesh(const std::vector<Vertex> &vertices);
-        ~GLMesh();
-        void draw(anim::Shader &shader) override;
-        void draw_outline(anim::Shader &shader) override;
+// TODO: Refactor Create function
+std::unique_ptr<Mesh> CreateBiPyramid();
+class GLMesh : public anim::Mesh
+{
+public:
+	GLMesh(const std::vector<Vertex>& vertices,
+		   const std::vector<unsigned int>& indices,
+		   const std::vector<Texture>& textures,
+		   const MaterialProperties& mat_properties);
+	GLMesh(const std::vector<Vertex>& vertices);
+	~GLMesh();
+	void draw(anim::Shader& shader) override;
+	void draw_outline(anim::Shader& shader) override;
 
-    private:
-        void init_buffer();
-        void draw();
+private:
+	void init_buffer();
+	void draw();
 
-    private:
-        unsigned int VAO_, VBO_, EBO_;
-    };
-}
+private:
+	unsigned int VAO_, VBO_, EBO_;
+};
+}	 // namespace anim::gl
 #endif

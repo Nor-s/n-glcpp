@@ -7,23 +7,23 @@
 
 namespace anim
 {
-    class Entity;
+class Entity;
 }
 class Scene;
 
 namespace ui
 {
-    class HierarchyLayer
-    {
-    public:
-        HierarchyLayer();
-        ~HierarchyLayer();
-        void draw(Scene *scene, UiContext &ui_context);
+class HierarchyLayer
+{
+public:
+	HierarchyLayer();
+	~HierarchyLayer();
+	void draw(Scene* scene, UiContext& ui_context);
 
-    private:
-        anim::Entity *draw_tree_node(anim::Entity *entity_node, const ImGuiTreeNodeFlags &node_flags, int depth = 0);
-        int selected_id_{-2};
-    };
+private:
+	anim::Entity* draw_tree_node(anim::Entity* entity_node, const ImGuiTreeNodeFlags& node_flags, int depth = 0);
+	int selected_id_{-2};
+};
 
-}
+}	 // namespace ui
 #endif

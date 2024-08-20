@@ -14,22 +14,21 @@
 
 namespace anim
 {
-    class AssimpAnimation : public Animation
-    {
-    public:
-        AssimpAnimation() = delete;
+class AssimpAnimation : public Animation
+{
+public:
+	AssimpAnimation() = delete;
 
-        AssimpAnimation(const aiAnimation *animation, const aiScene *scene, const char *path);
+	AssimpAnimation(const aiAnimation* animation, const aiScene* scene, const char* path);
 
-        ~AssimpAnimation();
+	~AssimpAnimation();
 
-    private:
-        void init_animation(const aiAnimation *animation, const aiScene *scene, const char *path);
-        void process_bones(const aiAnimation *animation, const aiNode *root_node);
-        void process_bindpose(const aiNode *node);
+private:
+	void init_animation(const aiAnimation* animation, const aiScene* scene, const char* path);
+	void process_bones(const aiAnimation* animation, const aiNode* root_node);
+	void process_bindpose(const aiNode* node);
+};
 
-    };
-
-}
+}	 // namespace anim
 
 #endif

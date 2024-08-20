@@ -194,11 +194,12 @@ void App::process_timeline_context()
 			{
 				history_->push(std::make_unique<anim::BoneChangeEvent>(
 					scenes_[current_scene_idx_].get(),
-					scenes_[current_scene_idx_]->get_mutable_ref_shared_resources().get(),
-					selected_entity->get_id(),
-					selected_entity->get_mutable_root()->get_component<anim::AnimationComponent>()->get_animation()->get_id(),
-					before_transform,
-					armature->get_pose()->get_animator()->get_current_time()));
+					scenes_[current_scene_idx_]->get_mutable_ref_shared_resources().get(), selected_entity->get_id(),
+					selected_entity->get_mutable_root()
+						->get_component<anim::AnimationComponent>()
+						->get_animation()
+						->get_id(),
+					before_transform, armature->get_pose()->get_animator()->get_current_time()));
 			}
 			count++;
 		}
@@ -217,11 +218,12 @@ void App::process_timeline_context()
 			armature->get_pose()->sub_current_bone(armature->get_name());
 			history_->push(std::make_unique<anim::BoneChangeEvent>(
 				scenes_[current_scene_idx_].get(),
-				scenes_[current_scene_idx_]->get_mutable_ref_shared_resources().get(),
-				selected_entity->get_id(),
-				selected_entity->get_mutable_root()->get_component<anim::AnimationComponent>()->get_animation()->get_id(),
-				before_transform,
-				armature->get_pose()->get_animator()->get_current_time()));
+				scenes_[current_scene_idx_]->get_mutable_ref_shared_resources().get(), selected_entity->get_id(),
+				selected_entity->get_mutable_root()
+					->get_component<anim::AnimationComponent>()
+					->get_animation()
+					->get_id(),
+				before_transform, armature->get_pose()->get_animator()->get_current_time()));
 		}
 	}
 }
@@ -236,7 +238,8 @@ void App::process_menu_context()
 	}
 	if (menu_context.is_clicked_export_animation)
 	{
-		shared_resources_->export_animation(scenes_[current_scene_idx_]->get_mutable_selected_entity(), menu_context.path.c_str(), menu_context.is_export_linear_interpolation);
+		shared_resources_->export_animation(scenes_[current_scene_idx_]->get_mutable_selected_entity(),
+											menu_context.path.c_str(), menu_context.is_export_linear_interpolation);
 	}
 	if (menu_context.is_clicked_import_dir)
 	{
@@ -274,11 +277,18 @@ void App::process_component_context()
 	auto& comp_context = ui_context.component;
 	if (comp_context.is_changed_animation)
 	{
-		auto animation_comp = scenes_[current_scene_idx_]->get_mutable_selected_entity()->get_mutable_root()->get_component<anim::AnimationComponent>();
+		auto animation_comp = scenes_[current_scene_idx_]
+								  ->get_mutable_selected_entity()
+								  ->get_mutable_root()
+								  ->get_component<anim::AnimationComponent>();
 		animation_comp->set_animation(shared_resources_->get_mutable_animation(comp_context.new_animation_idx));
 	}
-	if (comp_context.is_clicked_retargeting) {
-		auto pose_comp = scenes_[current_scene_idx_]->get_mutable_selected_entity()->get_mutable_root()->get_component<anim::PoseComponent>();
+	if (comp_context.is_clicked_retargeting)
+	{
+		auto pose_comp = scenes_[current_scene_idx_]
+							 ->get_mutable_selected_entity()
+							 ->get_mutable_root()
+							 ->get_component<anim::PoseComponent>();
 		auto retargeter = anim::MixamoRetargeter();
 		shared_resources_->add_animation(retargeter.retarget(pose_comp));
 	}
@@ -299,15 +309,10 @@ void App::process_python_context()
 			std::string model_info = exporter.to_json(pose_comp->get_root_entity());
 			const char* model_info_c = model_info.c_str();
 			auto py = anim::PyManager::get_instance();
-			py->get_mediapipe_animation(anim::MediapipeInfo{ py_context.video_path.c_str(),
-									py_context.save_path.c_str(),
-									model_info_c,
-									py_context.min_visibility,
-									py_context.is_angle_adjustment,
-									py_context.model_complexity,
-									py_context.min_detection_confidence,
-									py_context.fps,
-									&py_context.factor });
+			py->get_mediapipe_animation(anim::MediapipeInfo{
+				py_context.video_path.c_str(), py_context.save_path.c_str(), model_info_c, py_context.min_visibility,
+				py_context.is_angle_adjustment, py_context.model_complexity, py_context.min_detection_confidence,
+				py_context.fps, &py_context.factor});
 			import_model_or_animation(py_context.save_path.c_str());
 		}
 	}
@@ -352,7 +357,8 @@ void App::post_draw()
 
 void App::process_input(GLFWwindow* window)
 {
-	if (is_dialog_open_ || !ui_->is_scene_layer_hovered("scene" + std::to_string(current_scene_idx_ + 1)) || is_manipulated_)
+	if (is_dialog_open_ || !ui_->is_scene_layer_hovered("scene" + std::to_string(current_scene_idx_ + 1)) ||
+		is_manipulated_)
 	{
 		return;
 	}
@@ -388,16 +394,21 @@ void App::process_input(GLFWwindow* window)
 void App::mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
 	auto app = static_cast<App*>(glfwGetWindowUserPointer(window));
-	if (app->ui_ && app->ui_->is_scene_layer_hovered("scene" + std::to_string(app->current_scene_idx_ + 1))) {
+	if (app->ui_ && app->ui_->is_scene_layer_hovered("scene" + std::to_string(app->current_scene_idx_ + 1)))
+	{
 		if (app->is_pressed_ && app->scenes_.size() > app->current_scene_idx_)
 		{
-			app->scenes_[app->current_scene_idx_]->get_mutable_ref_camera()->process_mouse_movement((static_cast<float>(yposIn) - app->prev_mouse_.y) / 3.6f, (static_cast<float>(xposIn) - app->prev_mouse_.x) / 3.6f);
+			app->scenes_[app->current_scene_idx_]->get_mutable_ref_camera()->process_mouse_movement(
+				(static_cast<float>(yposIn) - app->prev_mouse_.y) / 3.6f,
+				(static_cast<float>(xposIn) - app->prev_mouse_.x) / 3.6f);
 			app->prev_mouse_.x = xposIn;
 			app->prev_mouse_.y = yposIn;
 		}
 		if (app->is_pressed_scroll_ && app->scenes_.size() > app->current_scene_idx_)
 		{
-			app->scenes_[app->current_scene_idx_]->get_mutable_ref_camera()->process_mouse_scroll_press((static_cast<float>(yposIn) - app->prev_mouse_.y), (static_cast<float>(xposIn) - app->prev_mouse_.x), app->delta_frame_);
+			app->scenes_[app->current_scene_idx_]->get_mutable_ref_camera()->process_mouse_scroll_press(
+				(static_cast<float>(yposIn) - app->prev_mouse_.y), (static_cast<float>(xposIn) - app->prev_mouse_.x),
+				app->delta_frame_);
 			app->prev_mouse_.x = xposIn;
 			app->prev_mouse_.y = yposIn;
 		}
@@ -409,7 +420,8 @@ void App::mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 void App::mouse_btn_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	auto app = static_cast<App*>(glfwGetWindowUserPointer(window));
-	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && app->ui_ && app->ui_->is_scene_layer_hovered("scene" + std::to_string(app->current_scene_idx_ + 1)))
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && app->ui_ &&
+		app->ui_->is_scene_layer_hovered("scene" + std::to_string(app->current_scene_idx_ + 1)))
 	{
 		app->prev_mouse_.x = app->cur_mouse_.x;
 		app->prev_mouse_.y = app->cur_mouse_.y;
@@ -419,7 +431,8 @@ void App::mouse_btn_callback(GLFWwindow* window, int button, int action, int mod
 	{
 		app->is_pressed_ = false;
 	}
-	if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS && app->ui_ && app->ui_->is_scene_layer_hovered("scene" + std::to_string(app->current_scene_idx_ + 1)))
+	if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_PRESS && app->ui_ &&
+		app->ui_->is_scene_layer_hovered("scene" + std::to_string(app->current_scene_idx_ + 1)))
 	{
 		app->prev_mouse_.x = app->cur_mouse_.x;
 		app->prev_mouse_.y = app->cur_mouse_.y;
@@ -434,6 +447,7 @@ void App::mouse_btn_callback(GLFWwindow* window, int button, int action, int mod
 void App::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	auto app = static_cast<App*>(glfwGetWindowUserPointer(window));
-	if (app->scenes_.size() > app->current_scene_idx_ && app->ui_ && app->ui_->is_scene_layer_hovered("scene" + std::to_string(app->current_scene_idx_ + 1)))
+	if (app->scenes_.size() > app->current_scene_idx_ && app->ui_ &&
+		app->ui_->is_scene_layer_hovered("scene" + std::to_string(app->current_scene_idx_ + 1)))
 		app->scenes_[app->current_scene_idx_]->get_mutable_ref_camera()->process_mouse_scroll(yoffset);
 }
