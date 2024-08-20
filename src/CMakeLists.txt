@@ -10,7 +10,7 @@ endif()
 
 add_library(glcpp STATIC ${GLCPP_SRC})
 
-set(LIBs STB_IMAGE imgui glad  jsoncpp_static)
+set(LIBs STB_IMAGE imgui glad  jsoncpp_static hiredis)
 
 
 if(MSVC)
@@ -62,6 +62,7 @@ set(test_src
     util/utility.h
 
     entity/entity.cpp
+    entity/components/realtime_component.cpp
     entity/components/transform_component.cpp
     entity/components/animation_component.cpp
     entity/components/pose_component.cpp
@@ -70,6 +71,7 @@ set(test_src
     
     entity/entity.h
     entity/components/component.h
+    entity/components/realtime_component.h
     entity/components/transform_component.h
     entity/components/animation_component.h
     entity/components/pose_component.h

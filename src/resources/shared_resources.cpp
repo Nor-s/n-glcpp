@@ -102,7 +102,9 @@ namespace anim
 	}
 	void SharedResources::update()
 	{
+		root_entity_->pre_update();
 		root_entity_->update();
+		root_entity_->post_update();
 	}
 }
 

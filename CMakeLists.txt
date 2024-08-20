@@ -114,6 +114,8 @@ else()
   add_subdirectory(external/glfw/)
 endif()
 
+message("hiredis")
+add_subdirectory(external/hiredis)
 message("jsoncpp")
 add_subdirectory(external/jsoncpp)
 message("GLM")
