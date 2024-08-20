@@ -22,6 +22,8 @@ if exist %mypath%\..\python\python.exe (
      echo -- END::LAYOUT 
      echo -- START::PIP INSTALL 
           %install_path%\python.exe -m pip install mediapipe
+          %install_path%\python.exe -m pip install async-timeout
+          %install_path%\python.exe -m pip install redis
           %install_path%\python.exe -m pip  install PyGLM==2.5.7
      echo -- END::PIP INSTALL 
 )
