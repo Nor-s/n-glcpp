@@ -83,7 +83,7 @@ def generate_matrix(tangent, normal, binormal):
     return glm.mat4(tan,  binorm, norm, glm.vec4(0.0, 0.0, 0.0, 1.0))
 
 def calc_hip_transform(mixamo_list, hips_node, left_leg_node, right_leg_node, spine_node):
-    hip_gizmo = hips_node.get_gizmo()
+    hip_gizmo = hips_node.get_current_axis()
     tleft_leg_local = hip_gizmo.get_local_pos(mixamo_list[Mixamo.LeftUpLeg])
     tright_leg_local = hip_gizmo.get_local_pos(mixamo_list[Mixamo.RightUpLeg])
     tspine_local = hip_gizmo.get_local_pos(mixamo_list[Mixamo.Spine])
@@ -135,11 +135,11 @@ class ModelNode:
         self.rotate = json_to_glm_quat(model_json["rotation"])
         self.scale = json_to_glm_vec(model_json["scale"])
         if before_transform != None:
-            self.position, self.rotate, self.scale = decompose(before_transform*self.get_transform())
+            self.position, self.rotate, self.scale = decompose(before_transform*self.get_bind_transform())
         if self.name == Mixamo.LeftUpLeg.name or self.name == Mixamo.RightUpLeg.name:
             self.position.y = 0
             self.position.z = 0
-        self.global_transform = parent_transform * self.get_transform()
+        self.global_transform = parent_transform * self.get_bind_transform()
 
         # find child
         childlist = model_json["child"]
@@ -173,21 +173,22 @@ class ModelNode:
 
         for child in self.child:
             child.normalize_spine(
-                parent_node=self, parent_transform=self.animation_transform*self.get_transform())
+                parent_node=self, parent_transform=self.animation_transform*self.get_bind_transform())
 
-    def normalize(self, mixamo_list, len=0.0):
+    def normalize(self, mixamo_list, visibility_list, len = 0.0):
         if self.name == "Hips":
             self.position = mixamo_list[self.idx]
         else:
-            n_position = glm.normalize(self.position)
-            self.position = len*n_position
+            if visibility_list != None and visibility_list[self.idx] > 0.0:
+                n_position = glm.normalize(self.position)
+                self.position = len*n_position
 
         for child in self.child:
 
             a = mixamo_list[self.idx]
             b = mixamo_list[child.idx]
             new_len = glm.distance(a, b)
-            child.normalize(mixamo_list, new_len)
+            child.normalize(mixamo_list, visibility_list, new_len)
 
     def find_child(self, name):
         for child in self.child:
@@ -195,65 +196,79 @@ class ModelNode:
                 return child
         return None
 
-    def calc_animation(self, mixamo_list,  parent_transform=glm.mat4(1.0), world_mixamo_adjust=glm.vec3(0.0, 0.0, 0.0)):
+    def calc_animation(self, mixamo_list,  parent_transform=glm.mat4(1.0), world_mixamo_adjust=glm.vec3(0.0, 0.0, 0.0), visibility_list = None):
+        before_transform = self.animation_transform
         self.animation_transform = glm.mat4(1.0)
-        current_gizmo = self.get_gizmo(parent_transform)
-
+        current_gizmo = self.get_current_axis(parent_transform)
         if self.name == Mixamo.Hips.name:
             self.animation_transform = calc_hip_transform(mixamo_list,
                                                     self,
                                                     self.find_child(Mixamo.LeftUpLeg.name),
                                                     self.find_child(Mixamo.RightUpLeg.name),
                                                     self.find_child(Mixamo.Spine.name))
+        # curent_gizmo = 현재 노드의 좌표계
+        # source = child가 바인딩포즈일 때의 위치
+        # target = child가 위치해야할 위치
+        # source -> target 방향으로 회전할 rotation 을 구함
         elif self.name == Mixamo.Spine2.name:
             neck = None
             for child in self.child:
                 if child.name == Mixamo.Neck.name:
                     neck = child
-            source_vec = neck.get_gizmo(parent_transform*self.get_transform()).get_origin()
+            source_vec = neck.get_current_axis(parent_transform*self.get_bind_transform()).get_origin()
             target_vec = world_mixamo_adjust + mixamo_list[neck.idx]
             self.animation_transform = current_gizmo.calc_rotation_matrix(source_vec, target_vec, is_abs=False)
 
         elif self.name == Mixamo.LeftHand.name or self.name == Mixamo.RightHand.name:
-            source_vec = self.child[0].get_gizmo(parent_transform*self.get_transform()).get_origin()
+            source_vec = self.child[0].get_current_axis(parent_transform*self.get_bind_transform()).get_origin()
             target_vec = world_mixamo_adjust + mixamo_list[self.child[0].idx]
-            for i in range(1, len(self.child)):
-                child_vec = self.child[i].get_gizmo(parent_transform*self.get_transform()).get_origin()
-                source_vec = glm.mix(source_vec, child_vec, 0.5)
-                target_vec = glm.mix(target_vec, world_mixamo_adjust + mixamo_list[self.child[i].idx], 0.5)
-            self.animation_transform = current_gizmo.calc_rotation_matrix(source_vec, target_vec, is_abs=False)
+            if visibility_list[self.child[0].idx] >  0:
+                for i in range(1, len(self.child)):
+                    if visibility_list[self.child[i].idx] > 0.0:
+                        child_vec = self.child[i].get_current_axis(parent_transform*self.get_bind_transform()).get_origin()
+                        source_vec = glm.mix(source_vec, child_vec, 0.5)
+                        target_vec = glm.mix(target_vec, world_mixamo_adjust + mixamo_list[self.child[i].idx], 0.5)
+                self.animation_transform = current_gizmo.calc_rotation_matrix(source_vec, target_vec, is_abs=False)
+            else:
+                self.animation_transform = before_transform
+                return
         
         elif len(self.child) > 0:
-            source_vec = self.child[0].get_gizmo(parent_transform*self.get_transform()).get_origin()
-            target_vec = world_mixamo_adjust + mixamo_list[self.child[0].idx]
-            is_abs = False
-            if self.name == Mixamo.LeftArm.name or self.name == Mixamo.RightArm.name:
-                is_abs = True
-            self.animation_transform = current_gizmo.calc_rotation_matrix(source_vec, target_vec, is_abs=is_abs)
+            if visibility_list[self.child[0].idx] > 0.0:
+                source_vec = self.child[0].get_current_axis(parent_transform*self.get_bind_transform()).get_origin()
+                target_vec = world_mixamo_adjust + mixamo_list[self.child[0].idx]
+                is_abs = False
+                if self.name == Mixamo.LeftArm.name or self.name == Mixamo.RightArm.name:
+                    is_abs = True
+                self.animation_transform = current_gizmo.calc_rotation_matrix(source_vec, target_vec, is_abs=is_abs)
+            else:
+                self.animation_transform = before_transform
+                return
         
-        self.global_transform = parent_transform*self.get_transform()*self.animation_transform
+        self.global_transform = parent_transform*self.get_bind_transform()*self.animation_transform
 
         for child in self.child:
-            adjust_vec1 = child.get_gizmo(self.global_transform).get_origin()
+            adjust_vec1 = child.get_current_axis(self.global_transform).get_origin()
             adjust_vec = adjust_vec1 - mixamo_list[child.idx]
             child.calc_animation(mixamo_list,
                                  self.global_transform,
-                                 world_mixamo_adjust=adjust_vec)
+                                 world_mixamo_adjust=adjust_vec,
+                                 visibility_list=visibility_list)
 
-    def get_transform(self):
+    def get_bind_transform(self):
         return calc_transform(self.position, self.rotate, self.scale)
 
-    def get_gizmo(self, parent_transform=glm.mat4(1.0)):
-            return self.gizmo.rotate(parent_transform*self.get_transform())
+    def get_current_axis(self, parent_transform=glm.mat4(1.0)):
+            return self.gizmo.rotate(parent_transform*self.get_bind_transform())
 
     def get_gizmo_apply_tmp(self, parent_transform=glm.mat4(1.0)):
-        return self.gizmo.rotate(parent_transform*self.get_transform()*self.animation_transform)
+        return self.gizmo.rotate(parent_transform*self.get_bind_transform()*self.animation_transform)
 
     def get_vec_and_group_list(self, result_vec_list, result_group_list, parent_transform=glm.mat4(1.0),  group_list=None, is_apply_animation_transform=False):
         if is_apply_animation_transform:
             result_vec_list[self.idx] = self.get_gizmo_apply_tmp(parent_transform).get_origin()
         else:
-            result_vec_list[self.idx] = self.get_gizmo(parent_transform).get_origin()
+            result_vec_list[self.idx] = self.get_current_axis(parent_transform).get_origin()
         if group_list == None:
             group_list = []
         group_list.append(self.idx)
@@ -266,10 +281,10 @@ class ModelNode:
         for child in self.child:
             if is_apply_animation_transform:
                 child.get_vec_and_group_list(
-                    result_vec_list, result_group_list, group_list=group_list, parent_transform=copy.deepcopy(parent_transform*self.get_transform() * self.animation_transform), is_apply_animation_transform=is_apply_animation_transform)
+                    result_vec_list, result_group_list, group_list=group_list, parent_transform=copy.deepcopy(parent_transform*self.get_bind_transform() * self.animation_transform), is_apply_animation_transform=is_apply_animation_transform)
             else:
                 child.get_vec_and_group_list(
-                    result_vec_list, result_group_list, group_list=group_list, parent_transform=copy.deepcopy(parent_transform*self.get_transform()), is_apply_animation_transform=is_apply_animation_transform)
+                    result_vec_list, result_group_list, group_list=group_list, parent_transform=copy.deepcopy(parent_transform*self.get_bind_transform()), is_apply_animation_transform=is_apply_animation_transform)
 
     def tmp_to_json(self, bones_json, visibility_list,  min_visibility=0.6):
         transform = decompose(self.animation_transform)
