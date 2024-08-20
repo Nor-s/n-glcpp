@@ -36,8 +36,8 @@ endif()
 
 message("==========================================================")
 # python
-add_executable(test12  cpython/main.cpp cpython/py_manager.cpp)
-target_link_libraries(test12 PUBLIC Python3::Python pybind11::embed)
+add_executable(test_python  cpython/main.cpp cpython/py_manager.cpp)
+target_link_libraries(test_python PUBLIC Python3::Python pybind11::embed)
 add_library(py  cpython/py_manager.cpp)
 target_link_libraries(py PUBLIC Python3::Python pybind11::embed)
 
@@ -99,14 +99,14 @@ set(test_src
     animation/bone.h
     animation/retargeter.h
 )
-add_library(test STATIC ${test_src})
+add_library(core STATIC ${test_src})
 
 
 if(MSVC)
-target_compile_options(test PUBLIC  "/utf-8")
+target_compile_options(core PUBLIC  "/utf-8")
 endif()
-target_link_libraries(test PUBLIC ${LIBs} glm assimp::assimp)
-target_include_directories(test PUBLIC ./
+target_link_libraries(core PUBLIC ${LIBs} glm assimp::assimp)
+target_include_directories(core PUBLIC ./
  ./entity/
   ./entity/components/
    ./entity/components/renderable 
@@ -147,13 +147,13 @@ if(MSVC)
   if (CMAKE_BUILD_TYPE  MATCHES Release)
       target_link_options(Anim PUBLIC "/INCREMENTAL" "/SUBSYSTEM:windows" "/ENTRY:mainCRTStartup")
   endif()
-  target_link_libraries(Anim  glcpp test py)
+  target_link_libraries(Anim  glcpp core py)
 elseif(WIN32)
     target_compile_options(Anim  PRIVATE -Wall -Werror -std=c++17 -static)
     target_link_libraries(Anim  glcpp)
     target_include_directories(Anim  PUBLIC ./)
 else()
-    target_link_libraries(Anim  glcpp test py)
+    target_link_libraries(Anim  glcpp core py)
 endif()
 
 message("==========================================================")
