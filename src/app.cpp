@@ -189,7 +189,7 @@ void App::process_timeline_context()
         selected_entity->set_local(entity_context.new_transform);
         if (auto armature = selected_entity->get_component<anim::ArmatureComponent>(); armature)
         {
-            armature->add_and_replace_bone();
+			armature->insert_and_update_bone();
             if (count == 0u)
             {
                 history_->push(std::make_unique<anim::BoneChangeEvent>(
