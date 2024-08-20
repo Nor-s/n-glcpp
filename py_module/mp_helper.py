@@ -96,49 +96,6 @@ def find_model_json(model_json, name):
                 return [is_find, result]
         return [False, None]
 
-
-def get_name_idx_map():
-    mediapipe_names = [
-        "nose",
-        "left_eye_inner",
-        "left_eye", 
-        "left_eye_outer",
-        "right_eye_inner", 
-        "right_eye", 
-        "right_eye_outer", 
-        "left_ear", 
-        "right_ear", 
-        "mouth_left",
-        "mouth_right", 
-        "left_shoulder", 
-        "right_shoulder",
-        "left_elbow", 
-        "right_elbow", 
-        "left_wrist", 
-        "right_wrist", 
-        "left_pinky",
-        "right_pinky", 
-        "left_index", 
-        "right_index", 
-        "left_thumb",
-        "right_thumb", 
-        "left_hip", 
-        "right_hip", 
-        "left_knee", 
-        "right_knee", 
-        "left_ankle", 
-        "right_ankle", 
-        "left_heel", 
-        "right_heel", 
-        "left_foot_index", 
-        "right_foot_index"]
-
-    name_idx_map = {}
-    for idx in range(0, len(mediapipe_names)):
-        name_idx_map[mediapipe_names[idx]] = idx
-    return name_idx_map
-
-
 def get_mixamo_name_idx_map():
     mixamo_name_idx_map = {}
     for data in Mixamo:
@@ -390,10 +347,10 @@ def detect_pose_to_glm_pose(mp_manager, image):
             (point, visibility) = MIXAMO_POSE_DATA[key].mp_to_mixamo(landmark, glm_list, visibility_list)
             glm_list[key.value] = point
             visibility_list[key.value] = visibility
-        
+
             if b_is_holistic and  key == Mixamo.RightHand:
                 break
-
+        
 
     # 2d pose landmarks
     leg2d = None
@@ -405,7 +362,7 @@ def detect_pose_to_glm_pose(mp_manager, image):
         hip2d_right = glm.vec3(landmark[POSE_LANDMARK.RIGHT_HIP].x,
                                landmark[POSE_LANDMARK.RIGHT_HIP].y, landmark[POSE_LANDMARK.RIGHT_HIP].z)
         leg2d = glm.vec3(landmark[26].x, landmark[26].y, landmark[26].z)
-        
+ 
     if lefthand_landmarks != None:
         wrist_position =  mp_landmark_to_vec3(lefthand_landmarks[HAND_LANDMARK.WRIST])
         relative = glm_list[Mixamo.LeftHand] - wrist_position
@@ -432,7 +389,6 @@ def detect_pose_to_glm_pose(mp_manager, image):
     mp_manager.mp_drawing.draw_landmarks(image=output_image, landmark_list=results.pose_landmarks,
                                          connections=mp_manager.mp_pose.POSE_CONNECTIONS, landmark_drawing_spec=mp_manager.mp_drawing_styles.get_default_pose_landmarks_style())
 
-    return output_image, glm_list, visibility_list, hip2d_left, hip2d_right, leg2d
 
 
     post_process_mixamo_landmark(glm_list)
