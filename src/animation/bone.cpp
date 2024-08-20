@@ -7,7 +7,7 @@
 namespace anim
 {
     Bone::Bone() = default;
-    Bone::Bone(const std::string &name, const aiNodeAnim *channel, const glm::mat4 &inverse_binding_pose)
+	Bone::Bone(const std::string& name, const aiNodeAnim* channel, const glm::mat4& inverse_binding_pose)
         : name_(name),
           local_transform_(1.0f)
     {
@@ -77,29 +77,29 @@ namespace anim
         local_transform_ = translation * rotation * scale;
     }
 
-    glm::mat4 &Bone::get_local_transform(float animation_time, float factor)
+	glm::mat4& Bone::get_local_transform(float animation_time, float factor)
     {
         update(animation_time, factor);
         return local_transform_;
     }
 
-    const glm::mat4 &Bone::get_bindpose() const
+	const glm::mat4& Bone::get_bindpose() const
     {
         return bindpose_;
     }
 
-    const std::set<float> &Bone::get_time_set() const
+	const std::set<float>& Bone::get_time_set() const
     {
         return time_set_;
     }
 
-    const std::string &Bone::get_name() const { return name_; }
+	const std::string& Bone::get_name() const { return name_; }
 
     float Bone::get_factor()
     {
         return factor_;
     }
-    void Bone::get_ai_node(aiNodeAnim *channel, const aiMatrix4x4 &binding_pose_transform, float factor, bool is_interpolated)
+	void Bone::get_ai_node(aiNodeAnim* channel, const aiMatrix4x4& binding_pose_transform, float factor, bool is_interpolated)
     {
         channel->mNodeName = aiString(name_);
 
@@ -121,7 +121,7 @@ namespace anim
             float anim_time = 0.0f;
             std::map<float, glm::mat4> new_transform_map;
             auto before_transform = glm::mat4(1.0f);
-            for (auto &t_mp : transform_map)
+			for (auto& t_mp : transform_map)
             {
                 for (; anim_time < t_mp.first; anim_time += 1.0f)
                 {
@@ -133,7 +133,7 @@ namespace anim
             transform_map = new_transform_map;
         }
 
-        for (auto &transform : transform_map)
+		for (auto& transform : transform_map)
         {
             auto transformation = AiMatToGlmMat(binding_pose_transform) * transform.second;
             auto [t, r, s] = DecomposeTransform(transformation);
@@ -161,39 +161,39 @@ namespace anim
         }
     }
 
-    void Bone::set_name(const std::string &name)
+	void Bone::set_name(const std::string& name)
     {
         name_ = name;
     }
-    void Bone::set_bindpose(const glm::mat4 &bindpose)
+	void Bone::set_bindpose(const glm::mat4& bindpose)
     {
         bindpose_ = bindpose;
     }
-    void Bone::push_position(const glm::vec3 &pos, float time, bool is_floor)
+	void Bone::push_position(const glm::vec3& pos, float time, bool is_floor)
     {
         if (is_floor && floor(time) != time)
         {
             return;
         }
-        positions_[time] = {pos, time};
+		positions_[time] = { pos, time };
         time_set_.insert(time);
     }
-    void Bone::push_rotation(const glm::quat &quat, float time, bool is_floor)
+	void Bone::push_rotation(const glm::quat& quat, float time, bool is_floor)
     {
         if (is_floor && floor(time) != time)
         {
             return;
         }
-        rotations_[time] = {quat, time};
+		rotations_[time] = { quat, time };
         time_set_.insert(time);
     }
-    void Bone::push_scale(const glm::vec3 &scale, float time, bool is_floor)
+	void Bone::push_scale(const glm::vec3& scale, float time, bool is_floor)
     {
         if (is_floor && floor(time) != time)
         {
             return;
         }
-        scales_[time] = {scale, time};
+		scales_[time] = { scale, time };
         time_set_.insert(time);
     }
 
@@ -212,15 +212,16 @@ namespace anim
 
     glm::mat4 Bone::interpolate_position(float animation_time)
     {
-        const auto &[p0Index, p1Index] = get_start_end<KeyPosition>(positions_, animation_time, KeyPosition{glm::vec3(0.0f, 0.0f, 0.0f), 0.0f});
+		const auto& [p0Index, p1Index] = get_start_end<KeyPosition>(positions_, animation_time, KeyPosition{ glm::vec3(0.0f, 0.0f, 0.0f), 0.0f });
         float scaleFactor = get_scale_factor(p0Index.get_time(),
                                              p1Index.get_time(), animation_time);
+
         return glm::translate(glm::mat4(1.0f), glm::mix(p0Index.position, p1Index.position, scaleFactor));
     }
 
     glm::mat4 Bone::interpolate_rotation(float animation_time)
     {
-        const auto &[p0Index, p1Index] = get_start_end<KeyRotation>(rotations_, animation_time, KeyRotation{glm::quat(1.0f, 0.0f, 0.0f, 0.0f), 0.0f});
+		const auto& [p0Index, p1Index] = get_start_end<KeyRotation>(rotations_, animation_time, KeyRotation{ glm::quat(1.0f, 0.0f, 0.0f, 0.0f), 0.0f });
         float scaleFactor = get_scale_factor(p0Index.get_time(),
                                              p1Index.get_time(), animation_time);
         glm::quat finalRotation = glm::slerp(p0Index.orientation, p1Index.orientation, (float)scaleFactor);
@@ -229,14 +230,14 @@ namespace anim
 
     glm::mat4 Bone::interpolate_scaling(float animation_time)
     {
-        const auto &[p0Index, p1Index] = get_start_end<KeyScale>(scales_, animation_time, KeyScale{glm::vec3(1.0f, 1.0f, 1.0f), 0.0f});
+		const auto& [p0Index, p1Index] = get_start_end<KeyScale>(scales_, animation_time, KeyScale{ glm::vec3(1.0f, 1.0f, 1.0f), 0.0f });
 
         float scaleFactor = get_scale_factor(p0Index.get_time(),
                                              p1Index.get_time(), animation_time);
         return glm::scale(glm::mat4(1.0f), glm::mix(p0Index.scale, p1Index.scale, scaleFactor));
     }
 
-    void Bone::replace_or_add_keyframe(const glm::mat4 &transform, float time)
+	void Bone::replace_or_add_keyframe(const glm::mat4& transform, float time)
     {
         float time_stamp = floorf(time) / factor_;
         auto [lt, lr, ls] = DecomposeTransform(get_local_transform(time, factor_));
@@ -251,17 +252,17 @@ namespace anim
         if (positions_.find(time_stamp) != positions_.end() || is_t_changed || positions_.size() == 0)
         {
             is_add = true;
-            positions_[time_stamp] = {t, time_stamp};
+			positions_[time_stamp] = { t, time_stamp };
         }
         if (rotations_.find(time_stamp) != rotations_.end() || is_r_changed || rotations_.size() == 0)
         {
             is_add = true;
-            rotations_[time_stamp] = {r, time_stamp};
+			rotations_[time_stamp] = { r, time_stamp };
         }
         if (scales_.find(time_stamp) != scales_.end() || is_s_changed || scales_.size() == 0)
         {
             is_add = true;
-            scales_[time_stamp] = {s, time_stamp};
+			scales_[time_stamp] = { s, time_stamp };
         }
         if (is_add)
         {
@@ -269,13 +270,13 @@ namespace anim
         }
     }
 
-    void Bone::replace_or_sub_keyframe(const glm::mat4 &transform, float time)
+	void Bone::replace_or_sub_keyframe(const glm::mat4& transform, float time)
     {
         float time_stamp = floorf(time) / factor_;
         auto [t, r, s] = DecomposeTransform(transform);
-        auto [it_t, it_r, it_s] = std::tuple{positions_.find(time_stamp),
+		auto [it_t, it_r, it_s] = std::tuple{ positions_.find(time_stamp),
                                              rotations_.find(time_stamp),
-                                             scales_.find(time_stamp)};
+											 scales_.find(time_stamp) };
         sub_keyframe(time);
 
         auto erased_transform = get_local_transform(time, factor_);
@@ -297,9 +298,9 @@ namespace anim
         {
             time_stamp = time;
         }
-        auto [it_t, it_r, it_s] = std::tuple{positions_.find(time_stamp),
+		auto [it_t, it_r, it_s] = std::tuple{ positions_.find(time_stamp),
                                              rotations_.find(time_stamp),
-                                             scales_.find(time_stamp)};
+											 scales_.find(time_stamp) };
         bool is_erased = false;
         if (it_t != positions_.end())
         {
