@@ -4,10 +4,9 @@
 | -------------------------- | --------------------------------------------- |
 | ![](/screenshot/88912.gif) | ![](/screenshot/88910.gif)                    |
 
-| realtime |
-| -------- |
-
-|![](/screenshot/mocap.gif)
+| realtime                   |
+| -------------------------- |
+| ![](/screenshot/mocap.gif) |
 
 ## **Demo**
 
