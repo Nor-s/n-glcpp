@@ -4,9 +4,23 @@
 | -------------------------- | --------------------------------------------- |
 | ![](/screenshot/88912.gif) | ![](/screenshot/88910.gif)                    |
 
-| realtime                   |
-| -------------------------- |
-| ![](/screenshot/mocap.gif) |
+
+
+|realtime| webcam based video|
+|-|-|
+| ![](/screenshot/mocap.gif) |![webcam2](https://github.com/user-attachments/assets/0818c800-c2c4-4b11-a9c2-9655c3869fb8)|
+
+
+| retarget before | retarget after |
+|-|-|
+|![retarget_before](https://user-images.githubusercontent.com/40836757/197576075-8bc69cde-bd08-4432-859b-db50927e7f5e.gif)|![retarget_aft](https://user-images.githubusercontent.com/40836757/197576153-f8660fdd-d3d4-4273-b5a3-9fb9b05b146d.gif)|
+
+|import|export|
+|-|-|
+|![multiple](https://github.com/user-attachments/assets/5d84c4e9-d748-4c3c-8066-71fbc269d626) | ![export](https://github.com/user-attachments/assets/10f42e70-8d13-434b-b535-7b9ef23b25f2) |
+
+
+
 
 ## **Demo**
 
