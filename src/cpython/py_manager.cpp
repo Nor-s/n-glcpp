@@ -25,6 +25,8 @@
 #include <pybind11/embed.h>
 #include <pybind11/stl_bind.h>
 
+#include "../util/log.h"
+
 namespace py = pybind11;
 using namespace py::literals;
 
@@ -74,6 +76,7 @@ PyManager* PyManager::get_instance()
 	if (instance_ == nullptr)
 	{
 		instance_ = new PyManager();
+		instance_->work();
 	}
 	return instance_;
 }
@@ -89,14 +92,12 @@ PyManager::PyManager()
 	auto site_path = lib_path / "site-packages";
 	auto app_path = exe_path / "mp_mocap";
 
-	const std::wstring pythonPath = lib_path.wstring() + L";" + dll_path.wstring() + L";" + site_path.wstring() + L";" +
-									app_path.wstring() + L";" + python_path.wstring() + L";" + exe_path.wstring();
-	Py_OptimizeFlag = 1;
-	Py_SetPath(pythonPath.c_str());
-	Py_SetPythonHome(pythonHome.c_str());
-	// Py_SetPythonHome(L"/Users/soongunno/githubRepo/Anim/Anim/build/bin/python/bin");
+	python_path_ = lib_path.wstring() + L";" + dll_path.wstring() + L";" + site_path.wstring() + L";" +
+				   app_path.wstring() + L";" + python_path.wstring() + L";" + exe_path.wstring();
+	// Py_SetPythonHome(pythonHome.c_str());
+	//  Py_SetPythonHome(L"/Users/soongunno/githubRepo/Anim/Anim/build/bin/python/bin");
 #ifndef NDEBUG
-	std::wcout << pythonPath << "\n";
+	// std::wcout << pythonPath << "\n";
 #endif
 #else
 	// auto lib_path = python_path / "lib";
@@ -113,38 +114,56 @@ PyManager::PyManager()
 	//                                 exe_path.wstring() + L";" +
 	//                                 dynload_path.wstring();
 #endif
-	py::initialize_interpreter();
-	py::exec(R"(
-			import json
-			import mp_mocap
-		)");
 }
 PyManager::~PyManager()
 {
+	anim::LOG("~Pymanager");
 	if (instance_ != nullptr)
 	{
 		delete instance_;
 		instance_ = nullptr;
 	}
-	py::finalize_interpreter();
+	b_is_running_ = false;
+	if (python_thread_.joinable())
+	{
+		python_thread_.join();
+	}
 }
 
-void PyManager::get_mediapipe_animation(const MediapipeInfo& mp_info)
+void PyManager::work()
 {
-	try
-	{
-		float factor = 0.0f;
-		if (mp_info.factor)
+	b_is_running_ = true;
+	python_thread_ = std::thread(
+		[]()
 		{
-			factor = *mp_info.factor;
-		}
-		auto locals = py::dict(
-			"video_path"_a = mp_info.video_path, "model_bindpose_info"_a = mp_info.model_info,
-			"output_path"_a = mp_info.output_path, "is_angle_adjustment"_a = mp_info.is_angle_adjustment,
-			"model_complexity"_a = mp_info.model_complexity,
-			"min_detection_confidence"_a = mp_info.min_detection_confidence,
-			"min_visibility"_a = mp_info.min_visibility, "custom_fps"_a = mp_info.fps, "custom_factor"_a = factor);
-		py::exec(R"(
+			auto* py = PyManager::get_instance();
+			Py_OptimizeFlag = 1;
+			Py_SetPath(py->python_path_.c_str());
+			py::initialize_interpreter();
+			{
+				while (py->b_is_running_)
+				{
+					if (py->b_is_task_pushed_)
+					{
+						py->b_is_task_pushed_ = false;
+						py->b_is_thread_work_ = true;
+
+						try
+						{
+							float factor = py->mp_info_.factor;
+							const auto locals =
+								py::dict("video_path"_a = py->mp_info_.video_path.c_str(),
+										 "model_bindpose_info"_a = py->mp_info_.model_info.c_str(),
+										 "output_path"_a = py->mp_info_.output_path.c_str(),
+										 "is_angle_adjustment"_a = py->mp_info_.is_angle_adjustment,
+										 "model_complexity"_a = py->mp_info_.model_complexity,
+										 "min_detection_confidence"_a = py->mp_info_.min_detection_confidence,
+										 "min_visibility"_a = py->mp_info_.min_visibility,
+										 "custom_fps"_a = py->mp_info_.fps, "custom_factor"_a = factor);
+							py::exec(R"(
+				import json
+				import mp_mocap
+
 				mp_mocap.set_mediapipe_status(
 					is_angle_adjustment=is_angle_adjustment,
 					model_complexity=model_complexity,
@@ -160,15 +179,46 @@ void PyManager::get_mediapipe_animation(const MediapipeInfo& mp_info)
 					redis_db=0
 				)
 				mp_mocap.mediapipe_to_mixamo(model_bindpose_info, video_path, output_path)
-				custom_factor = mpm.factor
             )",
-				 py::globals(), locals);
-		//*mp_info.factor = locals["custom_factor"].cast<float>();
-	}
-	catch (const std::exception& e)
+									 py::globals(), locals);
+							//*mp_info.factor = locals["custom_factor"].cast<float>();
+							py->b_is_thread_work_ = false;
+							py->callback_lock_.lock();
+							py->callbacks_.emplace_back(py->mp_info_.callback);
+							py->callback_lock_.unlock();
+						}
+						catch (const std::exception& e)
+						{
+							std::cerr << e.what() << std::endl;
+							py->b_is_thread_work_ = false;
+						}
+					}
+				}
+			}
+			py::finalize_interpreter();
+		});
+}
+
+void PyManager::get_mediapipe_animation(const MediapipeInfo& mp_info)
+{
+	if (b_is_thread_work_ || b_is_task_pushed_)
 	{
-		std::cerr << e.what() << std::endl;
+		return;
 	}
+	mp_info_ = mp_info;
+	b_is_task_pushed_ = true;
+}
+
+void PyManager::update()
+{
+	if (callbacks_.empty())
+	{
+		return;
+	}
+	callback_lock_.lock();
+	std::for_each(callbacks_.begin(), callbacks_.end(), [](auto callback) { callback(); });
+	callbacks_.clear();
+	callback_lock_.unlock();
 }
 
 }	 // namespace anim
