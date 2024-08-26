@@ -10,7 +10,7 @@
 [submodule "external/assimp"]
 	path = external/assimp
 	url = https://github.com/Nor-s/assimp.git
-	branch = fix_fbx_export
+	branch = master 
 [submodule "external/ImFileDialog"]
 	path = external/ImFileDialog
 	url = https://github.com/dfranx/ImFileDialog.git
