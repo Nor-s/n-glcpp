@@ -1,6 +1,7 @@
 #ifndef UI_IMGUI_TEXT_EDIT_H
 #define UI_IMGUI_TEXT_EDIT_H
 
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui/TextEditor.h>
 
 #include <string>

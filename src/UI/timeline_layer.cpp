@@ -35,7 +35,7 @@ TimelineLayer::TimelineLayer()
 void TimelineLayer::draw(Scene* scene, UiContext& ui_context)
 {
 	init_context(ui_context, scene);
-	ImGuiWindowFlags window_flags = ImGuiWindowFlags_AlwaysAutoResize;
+	ImGuiWindowFlags window_flags = 0;
 
 	if (is_hovered_zoom_slider_)
 	{

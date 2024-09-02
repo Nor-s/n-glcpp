@@ -1,6 +1,7 @@
 #ifndef UI_IMGUI_HELPER_H
 #define UI_IMGUI_HELPER_H
 
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui/imgui.h>
 #include <glm/glm.hpp>
 #include <string>

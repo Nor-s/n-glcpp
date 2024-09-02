@@ -17,7 +17,6 @@
 #include <fstream>
 #include <sstream>
 
-#include <ImGuiFileDialog/ImGuiFileDialog.h>
 #ifdef _WIN32
 #pragma warning(disable : 4005)
 #include <Windows.h>
@@ -29,7 +28,9 @@
 #include <pwd.h>
 #endif
 
-#define FILTER_MODEL "Model files (*.fbx *.gltf){.fbx,.gltf,.glb}"
+#define FILTER_MODEL "Model files (*.fbx *.gltf *.vrm){.fbx,.gltf,.glb,.vrm}"
+
+#include <ImGuiFileDialog/ImGuiFileDialog.h>
 
 namespace ui
 {
@@ -76,44 +77,56 @@ void MainLayer::init_bookmark()
 	ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByTypeFile, "", ImVec4(0.02f, .02f, 0.02f, 1.0f),
 											  ICON_IGFD_FILE);
 
+	std::string group_name = "Bookmark";
+	const size_t display_order = 0;
+	bool can_be_user_edited = false;
+	bool opened_by_default = true;
+
+	ImGuiFileDialog::Instance()->AddPlacesGroup(group_name, display_order, can_be_user_edited, opened_by_default);
+	auto places_ptr = ImGuiFileDialog::Instance()->GetPlacesGroupPtr(group_name);
+
 #ifdef _WIN32
 	wchar_t username[UNLEN + 1] = {0};
 	DWORD username_len = UNLEN + 1;
 	GetUserNameW(username, &username_len);
 	std::wstring userPath = L"C:\\Users\\" + std::wstring(username) + L"\\";
 	// Quick Access / Bookmarks
-	ImGuiFileDialog::Instance()->AddBookmark(ICON_MD_MONITOR " Desktop",
-											 std::filesystem::path(userPath).append("Desktop").string());
-	ImGuiFileDialog::Instance()->AddBookmark(ICON_MD_DESCRIPTION " Documents",
-											 std::filesystem::path(userPath).append("Documents").string());
-	ImGuiFileDialog::Instance()->AddBookmark(ICON_MD_DOWNLOAD " Downloads",
-											 std::filesystem::path(userPath).append("Downloads").string());
-	ImGuiFileDialog::Instance()->AddBookmark(ICON_MD_FAVORITE " Anim", std::filesystem::path("./").string());
+	if (places_ptr != nullptr)
+	{
+		places_ptr->AddPlace(ICON_MD_MONITOR " Desktop", std::filesystem::path(userPath).append("Desktop").string(),
+							 true);
+		// you can also add a separator
+		places_ptr->AddPlaceSeparator(1);
+		places_ptr->AddPlace(ICON_MD_DESCRIPTION " Documents",
+							 std::filesystem::path(userPath).append("Documents").string(), true);
+		places_ptr->AddPlace(ICON_MD_DOWNLOAD " Downloads",
+							 std::filesystem::path(userPath).append("Downloads").string(), true);
+		places_ptr->AddPlace(ICON_MD_FAVORITE " Anim", std::filesystem::path("./").string(), true);
 #elif __APPLE__
 	std::string user_name;
 	user_name = "/Users/" + std::string(getenv("USER"));
 	std::string homePath = user_name;
 	if (std::filesystem::exists(homePath + "/Desktop"))
 	{
-		ImGuiFileDialog::Instance()->AddBookmark(ICON_MD_MONITOR " Desktop",
-												 std::filesystem::path(homePath + "/Desktop").string());
+		places_ptr->AddPlace(ICON_MD_MONITOR " Desktop", std::filesystem::path(homePath + "/Desktop").string(), true);
 	}
 	if (std::filesystem::exists(homePath + "/Documents"))
 	{
-		ImGuiFileDialog::Instance()->AddBookmark(ICON_MD_DESCRIPTION " Documents", homePath + "/Documents");
+		places_ptr->AddPlace(ICON_MD_DESCRIPTION " Documents", homePath + "/Documents", true);
 	}
 	if (std::filesystem::exists(homePath + "/Downloads"))
 	{
-		ImGuiFileDialog::Instance()->AddBookmark(ICON_MD_DOWNLOAD " Downloads", homePath + "/Downloads");
+		places_ptr->AddPlace(ICON_MD_DOWNLOAD " Downloads", homePath + "/Downloads", true);
 	}
-	ImGuiFileDialog::Instance()->AddBookmark(ICON_MD_FAVORITE " Anim", std::filesystem::path("./").string());
+	places_ptr->AddPlace(ICON_MD_FAVORITE " Anim", std::filesystem::path("./").string(), true);
 #endif
+	}
 	std::ifstream wif("./bookmark");
 	if (wif.good())
 	{
 		std::stringstream ss;
 		ss << wif.rdbuf();
-		ImGuiFileDialog::Instance()->DeserializeBookmarks(ss.str());
+		ImGuiFileDialog::Instance()->DeserializePlaces(ss.str());
 	}
 	if (wif.is_open())
 	{
@@ -124,7 +137,7 @@ void MainLayer::init_bookmark()
 void MainLayer::shutdown()
 {
 	std::ofstream bookmark_stream("./bookmark");
-	std::string bookmark = ImGuiFileDialog::Instance()->SerializeBookmarks(false);
+	std::string bookmark = ImGuiFileDialog::Instance()->SerializePlaces(false);
 	bookmark_stream << bookmark;
 	if (bookmark_stream.is_open())
 	{
@@ -203,14 +216,15 @@ inline void LinearInfosPane(const char* vFilter,
 	ImGui::Checkbox("##check", reinterpret_cast<bool*>(vUserDatas));
 }
 // TODO: IMPORT OPTION: SCALE
-// inline void ScaleInfosPane(const char *vFilter, IGFDUserDatas vUserDatas, bool *vCantContinue) // if vCantContinue is
-// false, the user cant validate the dialog
-// {
-//     ImGui::TextColored(ImVec4(0, 1, 1, 1), "Import");
-//     ImGui::Text("Scale: ");
-//     ImGui::SameLine();
-//     ImGui::DragFloat("##check", reinterpret_cast<float *>(vUserDatas), 1.0f, 1.0f, 200.0f);
-// }
+inline void ScaleInfosPane(const char* vFilter,
+						   IGFDUserDatas vUserDatas,
+						   bool* vCantContinue)	   // if vCantContinue is false, the user cant validate the dialog
+{
+	ImGui::TextColored(ImVec4(0, 1, 1, 1), "Import");
+	ImGui::Text("Scale: ");
+	ImGui::SameLine();
+	ImGui::DragFloat("##check", reinterpret_cast<float*>(vUserDatas), 1.0f, 1.0f, 200.0f);
+}
 void MainLayer::draw_menu_bar(float fps)
 {
 	const char* menu_dialog_name[4] = {"Import", "ImportDir", "Export", "ExportData"};
@@ -220,35 +234,32 @@ void MainLayer::draw_menu_bar(float fps)
 	ImVec2 minSize = {650.0f, 400.0f};	  // Half the display area
 	const char* filters = FILTER_MODEL ",Json Animation (*.json){.json},.*";
 	static bool py_modal = false;
-
+	IGFD::FileDialogConfig config;
+	config.path = ".";
+	config.countSelectionMax = 1;
+	config.userDatas = nullptr;
+	config.flags = ImGuiFileDialogFlags_Modal | ImGuiFileDialogFlags_DisableCreateDirectoryButton;
 	if (ImGui::BeginMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
 		{
 			if (ImGui::MenuItem("Import: model, animation", NULL, nullptr))
 			{
-				ImGuiFileDialog::Instance()->OpenDialog(
-					menu_dialog_name[0], ICON_MD_FILE_OPEN " Open fbx, gltf ...", filters, ".", 1, nullptr,
-					// std::bind(&ScaleInfosPane, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
-					// 150, 1, IGFD::UserDatas(&ImportScale),
-					ImGuiFileDialogFlags_Modal | ImGuiFileDialogFlags_DisableCreateDirectoryButton);
+				ImGuiFileDialog::Instance()->OpenDialog(menu_dialog_name[0], ICON_MD_FILE_OPEN " Open fbx, gltf ...",
+														filters, config);
+				// std::bind(&ScaleInfosPane, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
+				// 150, 1, IGFD::UserDatas(&ImportScale),
 			}
 			if (ImGui::MenuItem("Import: Folder", NULL, nullptr))
 			{
-				ImGuiFileDialog::Instance()->OpenDialog(
-					menu_dialog_name[1], "Choose a Directory", nullptr, ".", 1, nullptr,
-					// std::bind(&ScaleInfosPane, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
-					// 150, 1, IGFD::UserDatas(&ImportScale),
-					ImGuiFileDialogFlags_Modal | ImGuiFileDialogFlags_DisableCreateDirectoryButton);
+				ImGuiFileDialog::Instance()->OpenDialog(menu_dialog_name[1], "Choose a Directory", nullptr, config);
+				// std::bind(&ScaleInfosPane, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
+				// 150, 1, IGFD::UserDatas(&ImportScale),
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Export: animation(selected model)", NULL, nullptr))
 			{
-				ImGuiFileDialog::Instance()->OpenDialog(
-					menu_dialog_name[2], "Save", FILTER_MODEL, ".", "",
-					std::bind(&LinearInfosPane, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
-					150, 1, IGFD::UserDatas(&isLinear),
-					ImGuiFileDialogFlags_Modal | ImGuiFileDialogFlags_ConfirmOverwrite);
+				ImGuiFileDialog::Instance()->OpenDialog(menu_dialog_name[2], "Save", FILTER_MODEL, config);
 			}
 			// for data extract (for deep learning)
 			// if (ImGui::MenuItem("Export: rotation, world pos(json)", NULL, nullptr))
@@ -307,11 +318,21 @@ void MainLayer::draw_python_modal(bool& is_open)
 		ImGui::OpenPopup("Mediapipe");
 		is_open = false;
 	}
+
+	// button style
 	ImGuiStyle& style = ImGui::GetStyle();
 	auto color = style.Colors[ImGuiCol_Button];
 	color.x = 1.0f - color.x;
 	color.y = 1.0f - color.y;
 	color.z = 1.0f - color.z;
+
+	// dialog config
+	IGFD::FileDialogConfig config;
+	config.path = ".";
+	config.countSelectionMax = 1;
+	config.userDatas = nullptr;
+	config.flags = ImGuiFileDialogFlags_Modal | ImGuiFileDialogFlags_DisableCreateDirectoryButton;
+
 	ImGui::PushStyleColor(ImGuiCol_FrameBg, color);
 	if (ImGui::BeginPopupModal("Mediapipe", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 	{
@@ -326,9 +347,8 @@ void MainLayer::draw_python_modal(bool& is_open)
 		auto current_cursor = ImGui::GetCursorPosX();
 		if (ImGui::Button("Open"))
 		{
-			ImGuiFileDialog::Instance()->OpenDialog(
-				"ChooseVideo", "Choose a Video", "Video (*.mp4 *.gif){.mp4,.gif,.avi},.*", ".", 1, nullptr,
-				ImGuiFileDialogFlags_Modal | ImGuiFileDialogFlags_DisableCreateDirectoryButton);
+			ImGuiFileDialog::Instance()->OpenDialog("ChooseVideo", "Choose a Video",
+													"Video (*.mp4 *.gif){.mp4,.gif,.avi},.*", config);
 		}
 		if (ImGuiFileDialog::Instance()->Display("ChooseVideo", ImGuiWindowFlags_NoCollapse, {650.0f, 400.0f}))
 		{
@@ -346,9 +366,7 @@ void MainLayer::draw_python_modal(bool& is_open)
 		ImGui::SameLine(current_cursor);
 		if (ImGui::Button("Open##2"))
 		{
-			ImGuiFileDialog::Instance()->OpenDialog(
-				"ChooseJson", "Choose a Json", "JSON (*.json){.json},.*", ".", 1, nullptr,
-				ImGuiFileDialogFlags_Modal | ImGuiFileDialogFlags_DisableCreateDirectoryButton);
+			ImGuiFileDialog::Instance()->OpenDialog("ChooseJson", "Choose a Json", "JSON (*.json){.json},.*", config);
 		}
 		if (ImGuiFileDialog::Instance()->Display("ChooseJson", ImGuiWindowFlags_NoCollapse, {650.0f, 400.0f}))
 		{

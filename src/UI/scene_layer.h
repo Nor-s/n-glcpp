@@ -1,6 +1,7 @@
 #ifndef UI_IMGUI_SCENE_WINDOW_H
 #define UI_IMGUI_SCENE_WINDOW_H
 
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "scene/scene.hpp"
 #include <imgui/imgui.h>
 #include <imgui/ImGuizmo.h>

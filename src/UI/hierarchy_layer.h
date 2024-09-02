@@ -1,6 +1,8 @@
 #ifndef UI_IMGUI_HIERARCHY_LAYER_H
 #define UI_IMGUI_HIERARCHY_LAYER_H
 
+#define IMGUI_DEFINE_MATH_OPERATORS
+
 #include <memory>
 #include <imgui/imgui.h>
 #include "ui_context.h"
