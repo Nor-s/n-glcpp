@@ -324,7 +324,7 @@ void App::process_python_context()
 
 void App::import_model_or_animation(const char* const path)
 {
-	shared_resources_->import(path, 100.0f);
+	shared_resources_->import(path);
 }
 
 void App::pre_draw()

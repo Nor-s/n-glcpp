@@ -59,7 +59,7 @@ struct MenuContext
 	bool is_clicked_export_all_data{false};
 	bool is_dialog_open{false};
 	bool is_export_linear_interpolation{true};
-	float import_scale{100.0f};
+	float import_scale{1.0f};
 	std::string path{""};
 	MenuContext()
 		: is_clicked_import_model(false)
@@ -68,7 +68,7 @@ struct MenuContext
 		, is_clicked_export_all_data(false)
 		, is_dialog_open(false)
 		, is_export_linear_interpolation(true)
-		, import_scale(100.0f)
+		, import_scale(1.0f)
 	{
 	}
 };

@@ -48,11 +48,14 @@ std::shared_ptr<Shader> SharedResources::get_mutable_shader(const std::string& n
 void SharedResources::import(const char* path, float scale)
 {
 	Importer import{};
-	import.mScale = scale;
 	auto [model, animations] = import.read_file(path);
 
 	add_animations(animations);
-	add_entity(model, path);
+
+	if (auto entity = add_entity(model, path); entity)
+	{
+		entity->set_local(glm::scale(entity->get_local(), glm::vec3(scale)));
+	}
 }
 void SharedResources::export_animation(Entity* entity, const char* save_path, bool is_linear)
 {
@@ -65,11 +68,11 @@ void SharedResources::export_animation(Entity* entity, const char* save_path, bo
 	}
 }
 
-void SharedResources::add_entity(std::shared_ptr<Model>& model, const char* path)
+std::shared_ptr<Entity> SharedResources::add_entity(std::shared_ptr<Model>& model, const char* path)
 {
 	if (!model)
 	{
-		return;
+		return nullptr;
 	}
 	std::shared_ptr<Entity> entity = nullptr;
 	convert_to_entity(entity, model, model->get_root_node(), nullptr, 0, nullptr);
@@ -80,6 +83,7 @@ void SharedResources::add_entity(std::shared_ptr<Model>& model, const char* path
 		model_path_[entity->get_id()] = std::string(path);
 		root_entity_->add_children(entity);
 	}
+	return entity;
 }
 void SharedResources::add_animations(const std::vector<std::shared_ptr<Animation>>& animations)
 {

@@ -9,6 +9,8 @@
 #include <memory>
 #include <map>
 
+#define DEFAULT_IMPORT_SCALE 1.0f
+
 struct GLFWwindow;
 
 class Scene;
@@ -51,6 +53,10 @@ private:
 	void shutdown();
 	void draw_menu_bar(float fps);
 	void draw_python_modal(bool& is_open);
+
+private:
+	static float ImportScale;
+
 	// https://www.fluentcpp.com/2017/09/22/make-pimpl-using-unique_ptr/
 	std::map<std::string, std::unique_ptr<SceneLayer>> scene_layer_map_;
 	HierarchyLayer hierarchy_layer_{};

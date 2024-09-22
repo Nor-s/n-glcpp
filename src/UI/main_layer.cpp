@@ -35,7 +35,8 @@
 namespace ui
 {
 static bool isLinear{true};
-static float ImportScale{100.0f};
+
+float MainLayer::ImportScale = DEFAULT_IMPORT_SCALE;
 
 MainLayer::MainLayer() = default;
 
@@ -220,7 +221,7 @@ inline void ScaleInfosPane(const char* vFilter,
 						   IGFDUserDatas vUserDatas,
 						   bool* vCantContinue)	   // if vCantContinue is false, the user cant validate the dialog
 {
-	ImGui::TextColored(ImVec4(0, 1, 1, 1), "Import");
+	ImGui::TextColored(ImVec4(0, 1, 1, 1), "Scale Pane");
 	ImGui::Text("Scale: ");
 	ImGui::SameLine();
 	ImGui::DragFloat("##check", reinterpret_cast<float*>(vUserDatas), 1.0f, 1.0f, 200.0f);
@@ -238,6 +239,7 @@ void MainLayer::draw_menu_bar(float fps)
 	config.path = ".";
 	config.countSelectionMax = 1;
 	config.userDatas = nullptr;
+	config.sidePaneWidth = 250.0f;
 	config.flags = ImGuiFileDialogFlags_Modal | ImGuiFileDialogFlags_DisableCreateDirectoryButton;
 	if (ImGui::BeginMenuBar())
 	{
@@ -245,10 +247,12 @@ void MainLayer::draw_menu_bar(float fps)
 		{
 			if (ImGui::MenuItem("Import: model, animation", NULL, nullptr))
 			{
+				config.userDatas = IGFD::UserDatas(&ImportScale);
+				config.sidePane =
+					std::bind(&ScaleInfosPane, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+
 				ImGuiFileDialog::Instance()->OpenDialog(menu_dialog_name[0], ICON_MD_FILE_OPEN " Open fbx, gltf ...",
 														filters, config);
-				// std::bind(&ScaleInfosPane, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
-				// 150, 1, IGFD::UserDatas(&ImportScale),
 			}
 			if (ImGui::MenuItem("Import: Folder", NULL, nullptr))
 			{
