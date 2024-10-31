@@ -45,7 +45,7 @@ private:
 	std::atomic_bool b_is_running_{false};
 	std::atomic_bool b_is_task_pushed_{false};
 	std::atomic_bool b_is_thread_work_{false};
-	std::wstring python_path_;
+	std::string python_path_;
 	std::mutex callback_lock_;
 	std::vector<std::function<void()>> callbacks_;
 	MediapipeInfo mp_info_;

@@ -83,36 +83,34 @@ PyManager* PyManager::get_instance()
 
 PyManager::PyManager()
 {
-#ifdef IS_WINDOWS
 	const auto exe_path = std::filesystem::path(getExecutableDir());
-	auto python_path = exe_path / "python";
-	const std::wstring pythonHome = python_path.wstring();
-	auto lib_path = python_path / "Lib";
-	auto dll_path = python_path / "DLLs";
+	auto home_path = exe_path / "python";
+	// const std::wstring python_home = home_path.wstring();
+#ifdef IS_WINDOWS
+	auto lib_path = home_path / "Lib";
 	auto site_path = lib_path / "site-packages";
 	auto app_path = exe_path / "mp_mocap";
+	auto dll_path = home_path / "DLLs";
 
-	python_path_ = lib_path.wstring() + L";" + dll_path.wstring() + L";" + site_path.wstring() + L";" +
-				   app_path.wstring() + L";" + python_path.wstring() + L";" + exe_path.wstring();
+	python_path_ = lib_path.string() + L";" + dll_path.string() + L";" + site_path.string() + L";" + app_path.string() +
+				   L";" + home_path.string() + L";" + exe_path.string();
 	// Py_SetPythonHome(pythonHome.c_str());
 	//  Py_SetPythonHome(L"/Users/soongunno/githubRepo/Anim/Anim/build/bin/python/bin");
+	// Py_SetPath(python_path_.c_str());
 #ifndef NDEBUG
 	// std::wcout << pythonPath << "\n";
 #endif
 #else
-	// auto lib_path = python_path / "lib";
-	// auto dll_path = lib_path / "python3.10";
-	// auto dynload_path = lib_path / "python3.10" / "lib-dynload";
-	// auto site_path = lib_path / "python3.10" / "site-packages";
-	// auto app_path = exe_path / "py_module";
-
-	// const std::wstring pythonPath = lib_path.wstring() + L";" +
-	//                                 dll_path.wstring() + L";" +
-	//                                 site_path.wstring() + L";" +
-	//                                 app_path.wstring() + L";" +
-	//                                 python_path.wstring() + L";" +
-	//                                 exe_path.wstring() + L";" +
-	//                                 dynload_path.wstring();
+	auto lib_path = home_path / "lib";
+	// auto zip_path = lib_path / "python310.zip";
+	auto py_path = lib_path / "python3.10";
+	auto site_path = py_path / "site-packages";
+	auto mp_mocap_path = site_path / "mp_mocap";
+	auto dynload_path = py_path / "lib-dynload";
+	python_path_ = lib_path.string() + ":" + py_path.string() + ":" + site_path.string() + ":" +
+				   mp_mocap_path.string() + ":" + dynload_path.string();
+	setenv("PYTHONHOME", home_path.c_str(), 1);
+	setenv("PYTHONPATH", python_path_.c_str(), 1);
 #endif
 }
 PyManager::~PyManager()
@@ -137,8 +135,6 @@ void PyManager::work()
 		[]()
 		{
 			auto* py = PyManager::get_instance();
-			Py_OptimizeFlag = 1;
-			Py_SetPath(py->python_path_.c_str());
 			py::initialize_interpreter();
 			{
 				while (py->b_is_running_)
@@ -151,17 +147,20 @@ void PyManager::work()
 						try
 						{
 							float factor = py->mp_info_.factor;
-							const auto locals =
-								py::dict("video_path"_a = py->mp_info_.video_path.c_str(),
-										 "model_bindpose_info"_a = py->mp_info_.model_info.c_str(),
-										 "output_path"_a = py->mp_info_.output_path.c_str(),
-										 "is_angle_adjustment"_a = py->mp_info_.is_angle_adjustment,
-										 "model_complexity"_a = py->mp_info_.model_complexity,
-										 "min_detection_confidence"_a = py->mp_info_.min_detection_confidence,
-										 "min_visibility"_a = py->mp_info_.min_visibility,
-										 "custom_fps"_a = py->mp_info_.fps, "custom_factor"_a = factor);
+							const auto locals = py::dict(
+								"video_path"_a = py->mp_info_.video_path.c_str(),
+								"model_bindpose_info"_a = py->mp_info_.model_info.c_str(),
+								"output_path"_a = py->mp_info_.output_path.c_str(),
+								"is_angle_adjustment"_a = py->mp_info_.is_angle_adjustment,
+								"model_complexity"_a = py->mp_info_.model_complexity,
+								"min_detection_confidence"_a = py->mp_info_.min_detection_confidence,
+								"min_visibility"_a = py->mp_info_.min_visibility, "py_path"_a = py->python_path_,
+								"custom_fps"_a = py->mp_info_.fps, "custom_factor"_a = factor);
 							py::exec(R"(
 				import json
+				import sys
+				print(py_path)
+				sys.path.append(py_path)
 				import mp_mocap
 
 				mp_mocap.set_mediapipe_status(

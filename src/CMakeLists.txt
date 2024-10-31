@@ -37,9 +37,9 @@ endif()
 message("==========================================================")
 # python
 add_executable(test_python  cpython/main.cpp cpython/py_manager.cpp)
-target_link_libraries(test_python PUBLIC Python3::Python pybind11::embed)
+target_link_libraries(test_python PUBLIC Python3::Python pybind11::pybind11 pybind11::embed)
 add_library(py  cpython/py_manager.cpp)
-target_link_libraries(py PUBLIC Python3::Python pybind11::embed)
+target_link_libraries(py PUBLIC Python3::Python pybind11::pybind11 pybind11::embed)
 
 # new
 set(test_src

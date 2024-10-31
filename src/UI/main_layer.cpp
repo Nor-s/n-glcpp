@@ -85,15 +85,15 @@ void MainLayer::init_bookmark()
 
 	ImGuiFileDialog::Instance()->AddPlacesGroup(group_name, display_order, can_be_user_edited, opened_by_default);
 	auto places_ptr = ImGuiFileDialog::Instance()->GetPlacesGroupPtr(group_name);
-
-#ifdef _WIN32
-	wchar_t username[UNLEN + 1] = {0};
-	DWORD username_len = UNLEN + 1;
-	GetUserNameW(username, &username_len);
-	std::wstring userPath = L"C:\\Users\\" + std::wstring(username) + L"\\";
 	// Quick Access / Bookmarks
 	if (places_ptr != nullptr)
 	{
+#ifdef _WIN32
+		wchar_t username[UNLEN + 1] = {0};
+		DWORD username_len = UNLEN + 1;
+		GetUserNameW(username, &username_len);
+		std::wstring userPath = L"C:\\Users\\" + std::wstring(username) + L"\\";
+
 		places_ptr->AddPlace(ICON_MD_MONITOR " Desktop", std::filesystem::path(userPath).append("Desktop").string(),
 							 true);
 		// you can also add a separator
@@ -104,22 +104,23 @@ void MainLayer::init_bookmark()
 							 std::filesystem::path(userPath).append("Downloads").string(), true);
 		places_ptr->AddPlace(ICON_MD_FAVORITE " Anim", std::filesystem::path("./").string(), true);
 #elif __APPLE__
-	std::string user_name;
-	user_name = "/Users/" + std::string(getenv("USER"));
-	std::string homePath = user_name;
-	if (std::filesystem::exists(homePath + "/Desktop"))
-	{
-		places_ptr->AddPlace(ICON_MD_MONITOR " Desktop", std::filesystem::path(homePath + "/Desktop").string(), true);
-	}
-	if (std::filesystem::exists(homePath + "/Documents"))
-	{
-		places_ptr->AddPlace(ICON_MD_DESCRIPTION " Documents", homePath + "/Documents", true);
-	}
-	if (std::filesystem::exists(homePath + "/Downloads"))
-	{
-		places_ptr->AddPlace(ICON_MD_DOWNLOAD " Downloads", homePath + "/Downloads", true);
-	}
-	places_ptr->AddPlace(ICON_MD_FAVORITE " Anim", std::filesystem::path("./").string(), true);
+		std::string user_name;
+		user_name = "/Users/" + std::string(getenv("USER"));
+		std::string homePath = user_name;
+		if (std::filesystem::exists(homePath + "/Desktop"))
+		{
+			places_ptr->AddPlace(ICON_MD_MONITOR " Desktop", std::filesystem::path(homePath + "/Desktop").string(),
+								 true);
+		}
+		if (std::filesystem::exists(homePath + "/Documents"))
+		{
+			places_ptr->AddPlace(ICON_MD_DESCRIPTION " Documents", homePath + "/Documents", true);
+		}
+		if (std::filesystem::exists(homePath + "/Downloads"))
+		{
+			places_ptr->AddPlace(ICON_MD_DOWNLOAD " Downloads", homePath + "/Downloads", true);
+		}
+		places_ptr->AddPlace(ICON_MD_FAVORITE " Anim", std::filesystem::path("./").string(), true);
 #endif
 	}
 	std::ifstream wif("./bookmark");
