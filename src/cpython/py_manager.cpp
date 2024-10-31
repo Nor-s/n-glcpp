@@ -147,15 +147,16 @@ void PyManager::work()
 						try
 						{
 							float factor = py->mp_info_.factor;
-							const auto locals = py::dict(
-								"video_path"_a = py->mp_info_.video_path.c_str(),
-								"model_bindpose_info"_a = py->mp_info_.model_info.c_str(),
-								"output_path"_a = py->mp_info_.output_path.c_str(),
-								"is_angle_adjustment"_a = py->mp_info_.is_angle_adjustment,
-								"model_complexity"_a = py->mp_info_.model_complexity,
-								"min_detection_confidence"_a = py->mp_info_.min_detection_confidence,
-								"min_visibility"_a = py->mp_info_.min_visibility, "py_path"_a = py->python_path_,
-								"custom_fps"_a = py->mp_info_.fps, "custom_factor"_a = factor);
+							const auto locals =
+								py::dict("video_path"_a = py->mp_info_.video_path.c_str(),
+										 "model_bindpose_info"_a = py->mp_info_.model_info.c_str(),
+										 "output_path"_a = py->mp_info_.output_path.c_str(),
+										 "is_angle_adjustment"_a = py->mp_info_.is_angle_adjustment,
+										 "model_complexity"_a = py->mp_info_.model_complexity,
+										 "min_detection_confidence"_a = py->mp_info_.min_detection_confidence,
+										 "min_visibility"_a = py->mp_info_.min_visibility,
+										 "py_path"_a = py->python_path_, "is_holistic"_a = py->mp_info_.is_holistic,
+										 "custom_fps"_a = py->mp_info_.fps, "custom_factor"_a = factor);
 							py::exec(R"(
 				import json
 				import sys
@@ -177,6 +178,10 @@ void PyManager::work()
 					redis_port=6379,
 					redis_db=0
 				)
+				if is_holistic:
+					mp_mocap.manager.set_holistic()
+				else:
+					mp_mocap.manager.set_pose()
 				mp_mocap.mediapipe_to_mixamo(model_bindpose_info, video_path, output_path)
             )",
 									 py::globals(), locals);

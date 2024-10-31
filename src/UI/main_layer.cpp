@@ -399,6 +399,11 @@ void MainLayer::draw_python_modal(bool& is_open)
 		ImGui::SameLine(text_cursor);
 		ImGui::Checkbox("##is_angle_adjustment", &context_.python.is_angle_adjustment);
 		ImGui::Separator();
+		ImGui::Text("On Holistic");
+		ImGui::NewLine();
+		ImGui::SameLine(text_cursor);
+		ImGui::Checkbox("##is_holistic", &context_.python.is_holistic);
+		ImGui::Separator();
 		ImGui::Text("Model Complexity");
 		ImGui::NewLine();
 		ImGui::SameLine(text_cursor);

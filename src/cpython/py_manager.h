@@ -16,6 +16,7 @@ struct MediapipeInfo
 	std::string model_info;
 	float min_visibility = 0.8f;
 	bool is_angle_adjustment = false;
+	bool is_holistic = true;
 	int model_complexity = 1;
 	float min_detection_confidence = 0.8f;
 	float fps = 24.0f;

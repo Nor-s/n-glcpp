@@ -310,7 +310,7 @@ void App::process_python_context()
 
 			py->get_mediapipe_animation(
 				anim::MediapipeInfo{py_context.video_path, py_context.save_path, model_info, py_context.min_visibility,
-									py_context.is_angle_adjustment, py_context.model_complexity,
+									py_context.is_angle_adjustment, py_context.is_holistic, py_context.model_complexity,
 									py_context.min_detection_confidence, py_context.fps, py_context.factor,
 									[save_path = py_context.save_path, this]()
 									{

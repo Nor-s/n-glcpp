@@ -109,6 +109,7 @@ struct PythonContext
 	static inline float min_detection_confidence{0.5f};
 	static inline int model_complexity{1};
 	static inline bool is_angle_adjustment{false};
+	static inline bool is_holistic{false};
 	static inline float fps{24.0f};
 	static inline float factor{0.0f};
 	bool is_clicked_convert_btn{false};
