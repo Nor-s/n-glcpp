@@ -92,11 +92,11 @@ PyManager::PyManager()
 	auto app_path = exe_path / "mp_mocap";
 	auto dll_path = home_path / "DLLs";
 
-	python_path_ = lib_path.string() + L";" + dll_path.string() + L";" + site_path.string() + L";" + app_path.string() +
-				   L";" + home_path.string() + L";" + exe_path.string();
+	auto python_path = lib_path.wstring() + L";" + dll_path.wstring() + L";" + site_path.wstring() + L";" +
+					   app_path.wstring() + L";" + home_path.wstring() + L";" + exe_path.wstring();
 	// Py_SetPythonHome(pythonHome.c_str());
 	//  Py_SetPythonHome(L"/Users/soongunno/githubRepo/Anim/Anim/build/bin/python/bin");
-	// Py_SetPath(python_path_.c_str());
+	Py_SetPath(python_path.c_str());
 #ifndef NDEBUG
 	// std::wcout << pythonPath << "\n";
 #endif
