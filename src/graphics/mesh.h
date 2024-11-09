@@ -97,11 +97,12 @@ class Mesh
 {
 public:
 	// Mesh::Mesh() = default;
-	Mesh(const std::vector<Vertex>& vertices,
+	Mesh(std::string_view mesh_name,
+		 const std::vector<Vertex>& vertices,
 		 const std::vector<unsigned int>& indices,
 		 const std::vector<Texture>& textures,
 		 const MaterialProperties& mat_properties);
-	Mesh(const std::vector<Vertex>& vertices);
+	Mesh(std::string_view mesh_name, const std::vector<Vertex>& vertices);
 	// virtual ~Mesh();
 	virtual ~Mesh() = default;
 	virtual void draw(Shader& shader) = 0;
@@ -110,8 +111,13 @@ public:
 	{
 		return mat_properties_;
 	}
+	const std::string& get_mesh_name()
+	{
+		return mesh_name_;
+	}
 
 protected:
+	std::string mesh_name_;
 	std::vector<Vertex> vertices_;
 	std::vector<unsigned int> indices_;
 	std::vector<Texture> textures_;

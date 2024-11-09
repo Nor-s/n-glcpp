@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <tuple>
 
 struct aiScene;
 
@@ -14,16 +15,21 @@ class Entity;
 class Animation;
 class Model;
 class SharedResources;
+class MorphTarget;
+
+using AnimationVector = std::vector<std::shared_ptr<Animation>>;
+using MorphTargetVector = std::vector<std::shared_ptr<MorphTarget>>;
 class Importer
 {
 public:
 	Importer();
 	~Importer() = default;
-	std::pair<std::shared_ptr<Model>, std::vector<std::shared_ptr<Animation>>> read_file(const char* path);
+	std::tuple<std::shared_ptr<Model>, AnimationVector, MorphTargetVector> read_file(const char* path);
 
 private:
 	std::shared_ptr<Model> import_model(const aiScene* scene);
-	std::vector<std::shared_ptr<Animation>> import_animation(const aiScene* scene);
+	AnimationVector import_animation(const aiScene* scene);
+	MorphTargetVector import_morphtarget(const aiScene* scene);
 
 private:
 	unsigned int assimp_flag_ = 0U;

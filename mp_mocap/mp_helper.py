@@ -226,11 +226,13 @@ def mediapipe_to_mixamo2(mp_manager,
             height2, width2, _ = cap_image.shape
             height = height2
             width = width2
+
             cap_image, glm_list, visibility_list, hip2d_left, hip2d_right, leg2d = detect_pose_to_glm_pose(
                 mp_manager, cap_image)
             
             if glm_list[0] != None:
                 time =  math.floor(frame_num*time_factor)
+                # post process 
                 # if one_euro_filter == None:
                     # one_euro_filter = OneEuroFilter(np.zeros_like( np.array(glm_list)), np.array(glm_list))
                 # else:
@@ -240,13 +242,21 @@ def mediapipe_to_mixamo2(mp_manager,
                     "time": time,
                     "bones": []
                 }
+
+                # generate retargeting data
                 mixamo_bindingpose_root_node.normalize(glm_list, visibility_list)
                 mixamo_bindingpose_root_node.calc_animation(glm_list, visibility_list=visibility_list)
                 mixamo_bindingpose_root_node.tmp_to_json(bones_json, visibility_list, min_visibility)
+
+                # save to redis
                 if mp_manager.redis != None:
                    bones_data = json.dumps(bones_json["bones"], ensure_ascii=False).encode('utf-8')
                    mp_manager.redis.set("animation", bones_data)
+                
+                # append to json
                 anim_result_json["frames"].append(bones_json)
+
+                # show plot
                 if is_show_result:
                     rg = []
                     rv = [None] * len(glm_list)
@@ -255,6 +265,8 @@ def mediapipe_to_mixamo2(mp_manager,
                     matplotlib.pyplot.clf()
                     # draw_list2(fig, rv, rg)
                     draw_list3(fig,rv, glm_list, rg)
+
+                # hips move
                 if is_hips_move:
                     hip2d_left.x *= width
                     hip2d_left.y *= height
@@ -279,18 +291,22 @@ def mediapipe_to_mixamo2(mp_manager,
             key = cv2.waitKey(5)
             if key & 0xFF == 27:
                 break
+
         factor_list.sort()
         factor_list_avg = sum(factor_list)/len(factor_list)
         factor_list_avg = max(factor_list_avg, factor_list[int(len(factor_list)*0.8)])
         factor = max(factor,factor_list_avg)
+
         if mp_manager.factor != 0.0:
            factor = mp_manager.factor
+
         print("factor", factor)
         for hips_bone in hip_move_list:
             set_hips_position(find_bones(anim_result_json["frames"][hips_bone[0]]["bones"], Mixamo.Hips.name)["position"],
                               origin, 
                               hips_bone[1], 
                               factor)
+            
         if anim_result_json["frames"][0]["time"] != 0.0:
             tmp_json = copy.deepcopy(anim_result_json["frames"][0])
             tmp_json["time"] = 0.0

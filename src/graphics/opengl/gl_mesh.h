@@ -11,11 +11,12 @@ std::unique_ptr<Mesh> CreateBiPyramid();
 class GLMesh : public anim::Mesh
 {
 public:
-	GLMesh(const std::vector<Vertex>& vertices,
+	GLMesh(std::string_view mesh_name,
+		   const std::vector<Vertex>& vertices,
 		   const std::vector<unsigned int>& indices,
 		   const std::vector<Texture>& textures,
 		   const MaterialProperties& mat_properties);
-	GLMesh(const std::vector<Vertex>& vertices);
+	GLMesh(std::string_view mesh_name, const std::vector<Vertex>& vertices);
 	~GLMesh();
 	void draw(anim::Shader& shader) override;
 	void draw_outline(anim::Shader& shader) override;

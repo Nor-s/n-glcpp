@@ -8,6 +8,7 @@
 #include "../animation/assimp_animation.h"
 #include "model.h"
 #include "../util/log.h"
+#include "../animation/morph_target.h"
 
 namespace fs = std::filesystem;
 
@@ -15,48 +16,53 @@ namespace anim
 {
 Importer::Importer()
 	: assimp_flag_(aiProcess_CalcTangentSpace | aiProcess_GenSmoothNormals | aiProcess_ImproveCacheLocality |
-				   aiProcess_LimitBoneWeights | aiProcess_RemoveRedundantMaterials | aiProcess_SplitLargeMeshes |
+				   aiProcess_LimitBoneWeights | aiProcess_RemoveRedundantMaterials |	// aiProcess_SplitLargeMeshes |
 				   aiProcess_Triangulate | aiProcess_GenUVCoords | aiProcess_SortByPType | aiProcess_FindDegenerates |
 				   aiProcess_FindInvalidData | aiProcess_FindInstances | aiProcess_ValidateDataStructure |
 				   aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph)
 {
 }
 
-std::pair<std::shared_ptr<Model>, std::vector<std::shared_ptr<Animation>>> Importer::read_file(const char* path)
+std::tuple<std::shared_ptr<Model>, AnimationVector, MorphTargetVector> Importer::read_file(const char* path)
 {
 	path_ = std::string(path);
-	std::vector<std::shared_ptr<Animation>> animations;
-	std::shared_ptr<Model> model;
+	AnimationVector animations;
+	MorphTargetVector morph_targets;
+	std::shared_ptr<Model> model = nullptr;
 	fs::path fs_path = fs::u8path(path_);
 
-	if (fs_path.extension() == ".json")
-	{
-		std::shared_ptr<JsonAnimation> anim = std::make_shared<JsonAnimation>(path_.c_str());
-		if (anim && anim->get_type() == AnimationType::Json)
-		{
-			animations.emplace_back(anim);
-		}
-		return std::make_pair(nullptr, animations);
-	}
 	try
 	{
-		Assimp::Importer importer;
-		importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
-		importer.SetPropertyInteger(AI_CONFIG_PP_SBBC_MAX_BONES, 128);
-		const aiScene* scene = importer.ReadFile(path_.c_str(), assimp_flag_);
-
-		model = import_model(scene);
-		animations = import_animation(scene);
-		if (model == nullptr && animations.size() == 0)
+		if (fs_path.extension() == ".json")
 		{
-			LOG("ERROR::IMPORTER::NULL " + std::string(importer.GetErrorString()));
+			std::shared_ptr<JsonAnimation> anim = std::make_shared<JsonAnimation>(path_.c_str());
+			if (anim && anim->get_type() == AnimationType::Json)
+			{
+				animations.emplace_back(anim);
+			}
+		}
+		else
+		{
+			Assimp::Importer importer;
+			importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+			importer.SetPropertyInteger(AI_CONFIG_PP_SBBC_MAX_BONES, 128);
+			const aiScene* scene = importer.ReadFile(path_.c_str(), assimp_flag_);
+
+			model = import_model(scene);
+			animations = import_animation(scene);
+			morph_targets = import_morphtarget(scene);
+
+			if (model == nullptr && animations.size() == 0)
+			{
+				LOG("ERROR::IMPORTER::NULL " + std::string(importer.GetErrorString()));
+			}
 		}
 	}
 	catch (std::exception& e)
 	{
 		LOG("ERROR::IMPORTER: " + std::string(e.what()));
 	}
-	return std::make_pair(model, animations);
+	return {model, animations, morph_targets};
 }
 std::shared_ptr<Model> Importer::import_model(const aiScene* scene)
 {
@@ -66,9 +72,9 @@ std::shared_ptr<Model> Importer::import_model(const aiScene* scene)
 	}
 	return std::make_shared<Model>(path_.c_str(), scene);
 }
-std::vector<std::shared_ptr<Animation>> Importer::import_animation(const aiScene* scene)
+AnimationVector Importer::import_animation(const aiScene* scene)
 {
-	std::vector<std::shared_ptr<Animation>> animations;
+	AnimationVector animations;
 	if (scene && scene->mRootNode)
 	{
 		for (unsigned int i = 0; i < scene->mNumAnimations; i++)
@@ -79,4 +85,9 @@ std::vector<std::shared_ptr<Animation>> Importer::import_animation(const aiScene
 	}
 	return animations;
 }
+MorphTargetVector Importer::import_morphtarget(const aiScene* scene)
+{
+	return CreateMorphTargets(scene);
+}
+
 }	 // namespace anim

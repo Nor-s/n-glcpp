@@ -142,7 +142,7 @@ void ArmatureComponent::update()
 			glm::mix(glm::vec3{0.87f, 0.87f, 0.97f}, glm::vec3{0.0f, 0.0f, 0.0f}, static_cast<float>(id_) / 128.0f);
 		mat.shininess = 1.0f;
 		glm::mat4 s = glm::scale(glm::mat4(1.0f), glm::vec3(scale_[i]));
-		if (isApplayLocalRotation)
+		//	if (isApplayLocalRotation)
 		{
 			s = glm::mat4(rotation_[i]) * s;
 		}

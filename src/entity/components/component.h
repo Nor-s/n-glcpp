@@ -50,6 +50,7 @@ public:
 		return T::type;
 	}
 };
+
 template <typename T>
 TypeID ComponentBase<T>::type((TypeID) &T::type);
 }	 // namespace anim

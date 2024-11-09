@@ -54,18 +54,19 @@ std::unique_ptr<Mesh> CreateBiPyramid()
 		vertices.push_back(vert);
 	}
 
-	return std::make_unique<GLMesh>(vertices);
+	return std::make_unique<GLMesh>("Bypyramid", vertices);
 }
 
-GLMesh::GLMesh(const std::vector<Vertex>& vertices,
+GLMesh::GLMesh(std::string_view mesh_name,
+			   const std::vector<Vertex>& vertices,
 			   const std::vector<unsigned int>& indices,
 			   const std::vector<Texture>& textures,
 			   const MaterialProperties& mat_properties)
-	: Mesh(vertices, indices, textures, mat_properties)
+	: Mesh(mesh_name, vertices, indices, textures, mat_properties)
 {
 	init_buffer();
 }
-GLMesh::GLMesh(const std::vector<Vertex>& vertices) : Mesh(vertices)
+GLMesh::GLMesh(std::string_view mesh_name, const std::vector<Vertex>& vertices) : Mesh(mesh_name, vertices)
 {
 	init_buffer();
 }
