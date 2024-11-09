@@ -62,6 +62,7 @@ set(test_src
     util/utility.h
 
     entity/entity.cpp
+    entity/components/ik_control_component.cpp
     entity/components/realtime_component.cpp
     entity/components/transform_component.cpp
     entity/components/animation_component.cpp
@@ -71,6 +72,7 @@ set(test_src
     
     entity/entity.h
     entity/components/component.h
+    entity/components/ik_control_component.h
     entity/components/realtime_component.h
     entity/components/transform_component.h
     entity/components/animation_component.h

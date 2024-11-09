@@ -7,6 +7,8 @@
 #include <entity/components/renderable/mesh_component.h>
 #include <entity/components/realtime_component.h>
 #include <entity/components/animation_component.h>
+#include <entity/components/renderable/armature_component.h>
+#include <entity/components/ik_control_component.h>
 #include <animation/animation.h>
 
 using namespace anim;
@@ -19,26 +21,32 @@ ComponentLayer::~ComponentLayer() = default;
 
 void ComponentLayer::draw(ComponentContext& context, Scene* scene)
 {
-	Entity* entity = scene->get_mutable_selected_entity();
+	Entity* current_entity = scene->get_mutable_selected_entity();
 	SharedResources* resources = scene->get_mutable_ref_shared_resources().get();
+
+	if (current_entity != nullptr)
+	{
+		anim::LOG(current_entity->get_name().c_str());
+	}
 
 	if (ImGui::Begin("Component"))
 	{
-		if (entity)
+		if (current_entity)
 		{
 			if (ImGui::CollapsingHeader("Transform"))
 			{
-				ImGui::Text(entity->get_name().data());
+				ImGui::Text(current_entity->get_name().data());
 				ImGui::Separator();
-				draw_transform(entity);
+				draw_transform(current_entity);
 				ImGui::Separator();
 			}
-			if (auto mesh = entity->get_component<anim::MeshComponent>(); mesh && ImGui::CollapsingHeader("Mesh"))
+			if (auto mesh = current_entity->get_component<anim::MeshComponent>();
+				mesh && ImGui::CollapsingHeader("Mesh"))
 			{
 				draw_mesh(mesh);
 				ImGui::Separator();
 			}
-			if (auto root = entity->get_mutable_root(); root)
+			if (auto root = current_entity->get_mutable_root(); root)
 			{
 				if (auto animation = root->get_component<AnimationComponent>();
 					animation && ImGui::CollapsingHeader("Animation"))
@@ -52,7 +60,13 @@ void ComponentLayer::draw(ComponentContext& context, Scene* scene)
 					draw_realtime_component(*realtime_component);
 					ImGui::Separator();
 				}
-				draw_manupulate_component_button(root);
+				if (auto ik_control_component = current_entity->get_component<IKControlComponent>();
+					ik_control_component && ImGui::CollapsingHeader("IK Control"))
+				{
+					draw_ik_control_component(*ik_control_component);
+					ImGui::Separator();
+				}
+				draw_component_edit_button(root, current_entity);
 			}
 		}
 	}
@@ -166,6 +180,51 @@ void ComponentLayer::draw_realtime_component(anim::RealTimeComponent& realtime_c
 	}
 }
 
+void ComponentLayer::draw_ik_control_component(anim::IKControlComponent& ik_component)
+{
+	auto* owner = ik_component.get_owner();
+	const auto& owner_name = owner->get_name();
+	ImGui::Text("start");
+	ImGui::SameLine();
+	ImGui::Text(owner_name.c_str());
+
+	std::vector<const char*> parent_items;
+	std::vector<anim::Entity*> parent_entity_items;
+	parent_items.reserve(8);
+	parent_entity_items.reserve(8);
+
+	auto* parent = owner;
+	int current_index = 0;
+	while (parent && parent->get_component<anim::ArmatureComponent>())
+	{
+		if (ik_component.get_end() == parent)
+			current_index = parent_items.size();
+		parent_items.push_back(parent->get_name().c_str());
+		parent_entity_items.push_back(parent);
+		parent = parent->get_mutable_parent();
+	}
+
+	ImGui::Text("end");
+	ImGui::SameLine();
+	if (ImGui::BeginCombo("##ik_end_select", parent_items[current_index]))
+	{
+		int item_size = parent_items.size();
+		for (int i = 0; i < item_size; i++)
+		{
+			bool isSelected = current_index == i;
+			if (ImGui::Selectable(parent_items[i], isSelected))
+			{
+				current_index = i;
+			}
+			if (isSelected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+
+	ik_component.set_end(parent_entity_items[current_index]);
+}
+
 void ComponentLayer::draw_mesh(anim::MeshComponent* mesh)
 {
 	auto material = mesh->get_mutable_mat();
@@ -176,23 +235,34 @@ void ComponentLayer::draw_mesh(anim::MeshComponent* mesh)
 	}
 }
 
-void ComponentLayer::draw_manupulate_component_button(anim::Entity* entity)
+void ComponentLayer::draw_component_edit_button(anim::Entity* root_entity, anim::Entity* current_entity)
 {
-	auto* posecomponent = entity->get_component<anim::PoseComponent>();
+	auto* pose_component = root_entity->get_component<anim::PoseComponent>();
+	auto* armature_component = current_entity->get_component<ArmatureComponent>();
 	ImGui::AlignTextToFramePadding();
+
+	// TODO: remove hard coding
 	if (ImGui::CollapsingHeader("+"))
 	{
-		if (posecomponent && ImGui::Button("+RealTimeComponent"))
+		if (pose_component && ImGui::Button("+RealTimeComponent"))
 		{
-			entity->add_component<RealTimeComponent>();
+			root_entity->add_component<RealTimeComponent>();
+		}
+		if (armature_component && ImGui::Button("+IKControlComponent"))
+		{
+			current_entity->add_component<IKControlComponent>();
 		}
 		ImGui::Separator();
 	}
 	if (ImGui::CollapsingHeader("-"))
 	{
-		if (posecomponent && ImGui::Button("-RealTimeComponent"))
+		if (pose_component && ImGui::Button("-RealTimeComponent"))
 		{
-			entity->remove_component<RealTimeComponent>();
+			root_entity->remove_component<RealTimeComponent>();
+		}
+		if (armature_component && ImGui::Button("-IKControlComponent"))
+		{
+			current_entity->remove_component<IKControlComponent>();
 		}
 		ImGui::Separator();
 	}
