@@ -27,6 +27,7 @@ private:
 	void init_animation(const aiAnimation* animation, const aiScene* scene, const char* path);
 	void process_bones(const aiAnimation* animation, const aiNode* root_node);
 	void process_bindpose(const aiNode* node);
+	void process_morph_target(const aiScene* scene);
 };
 
 }	 // namespace anim

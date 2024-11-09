@@ -41,13 +41,14 @@ void Model::load_model(const char* path, const aiScene* scene)
 void Model::process_node(std::shared_ptr<ModelNode>& model_node, aiNode* ai_node, const aiScene* scene)
 {
 	node_count_++;
-	std::string model_name = std::string(ai_node->mName.C_Str());
-	model_node.reset(new ModelNode(AiMatToGlmMat(ai_node->mTransformation), model_name, ai_node->mNumChildren));
+	std::string node_name = std::string(ai_node->mName.C_Str());
+	model_node.reset(new ModelNode(AiMatToGlmMat(ai_node->mTransformation), node_name, ai_node->mNumChildren));
 	for (unsigned int i = 0; i < ai_node->mNumMeshes; i++)
 	{
 		aiMesh* mesh = scene->mMeshes[ai_node->mMeshes[i]];
 		model_node->meshes.emplace_back(process_mesh(mesh, scene));
 		model_node->has_bone = mesh->HasBones();
+		mesh_name_node_name_map_[mesh->mName.C_Str()] = node_name;
 	}
 
 	for (unsigned int i = 0; i < ai_node->mNumChildren; i++)
@@ -83,7 +84,7 @@ std::shared_ptr<Mesh> Model::process_mesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<Texture> textures;
 	MaterialProperties mat_properties;
 
-	LOG(mesh->mName.C_Str());
+	LOG("mesh:   " + std::string(mesh->mName.C_Str()));
 
 	// process vertex
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -161,7 +162,7 @@ std::shared_ptr<Mesh> Model::process_mesh(aiMesh* mesh, const aiScene* scene)
 	std::vector<Texture> heightMaps = load_material_textures(material, scene, aiTextureType_AMBIENT, "texture_height");
 	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-	return std::make_shared<GLMesh>(vertices, indices, textures, mat_properties);
+	return std::make_shared<GLMesh>(mesh->mName.C_Str(), vertices, indices, textures, mat_properties);
 }
 
 void Model::process_bone(aiMesh* mesh, const aiScene* scene, std::vector<Vertex>& vertices)

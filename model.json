@@ -1,0 +1,1668 @@
+{
+	"name" : "model",
+	"node" : 
+	{
+		"child" : 
+		[
+			{
+				"child" : 
+				[
+					{
+						"child" : 
+						[
+							{
+								"child" : 
+								[
+									{
+										"child" : 
+										[
+											{
+												"child" : 
+												[
+													{
+														"child" : [],
+														"name" : "mixamorig:HeadTop_End",
+														"parent_name" : "mixamorig:Head",
+														"position" : 
+														{
+															"x" : -5.9122899718350164e-19,
+															"y" : 21.749261856079102,
+															"z" : -2.248201624865942e-15
+														},
+														"rotation" : 
+														{
+															"w" : 1.0,
+															"x" : 0.0,
+															"y" : 0.0,
+															"z" : 0.0
+														},
+														"scale" : 
+														{
+															"x" : 1.0,
+															"y" : 1.0,
+															"z" : 1.0
+														}
+													}
+												],
+												"name" : "mixamorig:Head",
+												"parent_name" : "mixamorig:Neck",
+												"position" : 
+												{
+													"x" : 1.9285147700998095e-08,
+													"y" : 4.4378724098205566,
+													"z" : -6.7723604502134549e-15
+												},
+												"rotation" : 
+												{
+													"w" : 0.99412715435028076,
+													"x" : -0.10821866244077682,
+													"y" : 0.0,
+													"z" : 0.0
+												},
+												"scale" : 
+												{
+													"x" : 1.0,
+													"y" : 1.0,
+													"z" : 1.0
+												}
+											}
+										],
+										"name" : "mixamorig:Neck",
+										"parent_name" : "mixamorig:Spine2",
+										"position" : 
+										{
+											"x" : 6.2933459332725761e-08,
+											"y" : 14.544454574584961,
+											"z" : -8.8817841970012523e-16
+										},
+										"rotation" : 
+										{
+											"w" : 0.96710032224655151,
+											"x" : 0.25439527630805969,
+											"y" : 0.0,
+											"z" : 0.0
+										},
+										"scale" : 
+										{
+											"x" : 1.0,
+											"y" : 1.0,
+											"z" : 1.0
+										}
+									},
+									{
+										"child" : 
+										[
+											{
+												"child" : 
+												[
+													{
+														"child" : 
+														[
+															{
+																"child" : 
+																[
+																	{
+																		"child" : 
+																		[
+																			{
+																				"child" : 
+																				[
+																					{
+																						"child" : 
+																						[
+																							{
+																								"child" : [],
+																								"name" : "mixamorig:LeftHandThumb4",
+																								"parent_name" : "mixamorig:LeftHandThumb3",
+																								"position" : 
+																								{
+																									"x" : 1.2532054824987426e-05,
+																									"y" : 2.7056441307067871,
+																									"z" : 4.6811433094262611e-06
+																								},
+																								"rotation" : 
+																								{
+																									"w" : 0.9893643856048584,
+																									"x" : 0.028721554204821587,
+																									"y" : 0.12450416386127472,
+																									"z" : 0.069512084126472473
+																								},
+																								"scale" : 
+																								{
+																									"x" : 0.99999994039535522,
+																									"y" : 0.99999994039535522,
+																									"z" : 1.0
+																								}
+																							}
+																						],
+																						"name" : "mixamorig:LeftHandThumb3",
+																						"parent_name" : "mixamorig:LeftHandThumb2",
+																						"position" : 
+																						{
+																							"x" : -2.3176439269806913e-15,
+																							"y" : 5.1786994934082031,
+																							"z" : 9.6037493414616662e-15
+																						},
+																						"rotation" : 
+																						{
+																							"w" : 1.0,
+																							"x" : 0.0,
+																							"y" : 0.0,
+																							"z" : 0.0
+																						},
+																						"scale" : 
+																						{
+																							"x" : 1.0,
+																							"y" : 1.0,
+																							"z" : 1.0
+																						}
+																					}
+																				],
+																				"name" : "mixamorig:LeftHandThumb2",
+																				"parent_name" : "mixamorig:LeftHandThumb1",
+																				"position" : 
+																				{
+																					"x" : 6.3852032893636692e-15,
+																					"y" : 4.9488186836242676,
+																					"z" : -2.0557220273384642e-14
+																				},
+																				"rotation" : 
+																				{
+																					"w" : 0.99925351142883301,
+																					"x" : -0.0097018508240580559,
+																					"y" : 0.0053086034022271633,
+																					"z" : -0.037015400826931
+																				},
+																				"scale" : 
+																				{
+																					"x" : 0.99999994039535522,
+																					"y" : 1.0,
+																					"z" : 1.0
+																				}
+																			}
+																		],
+																		"name" : "mixamorig:LeftHandThumb1",
+																		"parent_name" : "mixamorig:LeftHand",
+																		"position" : 
+																		{
+																			"x" : -1.8764913082122803,
+																			"y" : 2.28438401222229,
+																			"z" : 1.2081130743026733
+																		},
+																		"rotation" : 
+																		{
+																			"w" : 0.92841106653213501,
+																			"x" : 0.25980398058891296,
+																			"y" : -0.071580924093723297,
+																			"z" : 0.25579482316970825
+																		},
+																		"scale" : 
+																		{
+																			"x" : 1.0,
+																			"y" : 1.0,
+																			"z" : 1.0
+																		}
+																	},
+																	{
+																		"child" : 
+																		[
+																			{
+																				"child" : 
+																				[
+																					{
+																						"child" : 
+																						[
+																							{
+																								"child" : [],
+																								"name" : "mixamorig:LeftHandIndex4",
+																								"parent_name" : "mixamorig:LeftHandIndex3",
+																								"position" : 
+																								{
+																									"x" : -9.2448926807264797e-06,
+																									"y" : 2.3343477249145508,
+																									"z" : 4.5490291995520238e-06
+																								},
+																								"rotation" : 
+																								{
+																									"w" : 0.99998486042022705,
+																									"x" : 0.0037722850684076548,
+																									"y" : 0.0040021799504756927,
+																									"z" : 6.377536465151934e-06
+																								},
+																								"scale" : 
+																								{
+																									"x" : 1.0,
+																									"y" : 0.99999994039535522,
+																									"z" : 1.0
+																								}
+																							}
+																						],
+																						"name" : "mixamorig:LeftHandIndex3",
+																						"parent_name" : "mixamorig:LeftHandIndex2",
+																						"position" : 
+																						{
+																							"x" : -1.3247908725588786e-07,
+																							"y" : 3.3910980224609375,
+																							"z" : -2.7768098150721121e-14
+																						},
+																						"rotation" : 
+																						{
+																							"w" : 1.0,
+																							"x" : 0.0,
+																							"y" : 0.0,
+																							"z" : 0.0
+																						},
+																						"scale" : 
+																						{
+																							"x" : 1.0,
+																							"y" : 1.0,
+																							"z" : 1.0
+																						}
+																					}
+																				],
+																				"name" : "mixamorig:LeftHandIndex2",
+																				"parent_name" : "mixamorig:LeftHandIndex1",
+																				"position" : 
+																				{
+																					"x" : 1.6256911927205707e-14,
+																					"y" : 5.5493011474609375,
+																					"z" : 1.3418084392614708e-14
+																				},
+																				"rotation" : 
+																				{
+																					"w" : 1.0,
+																					"x" : 0.0,
+																					"y" : 0.0,
+																					"z" : 0.0
+																				},
+																				"scale" : 
+																				{
+																					"x" : 1.0,
+																					"y" : 1.0,
+																					"z" : 1.0
+																				}
+																			}
+																		],
+																		"name" : "mixamorig:LeftHandIndex1",
+																		"parent_name" : "mixamorig:LeftHand",
+																		"position" : 
+																		{
+																			"x" : -2.2648472785949707,
+																			"y" : 10.514762878417969,
+																			"z" : 0.231353759765625
+																		},
+																		"rotation" : 
+																		{
+																			"w" : 1.0,
+																			"x" : 0.0,
+																			"y" : 0.0,
+																			"z" : 0.0
+																		},
+																		"scale" : 
+																		{
+																			"x" : 1.0,
+																			"y" : 1.0,
+																			"z" : 1.0
+																		}
+																	},
+																	{
+																		"child" : 
+																		[
+																			{
+																				"child" : 
+																				[
+																					{
+																						"child" : 
+																						[
+																							{
+																								"child" : [],
+																								"name" : "mixamorig:LeftHandMiddle4",
+																								"parent_name" : "mixamorig:LeftHandMiddle3",
+																								"position" : 
+																								{
+																									"x" : -2.149902684323024e-05,
+																									"y" : 2.7520427703857422,
+																									"z" : 2.082921582768904e-06
+																								},
+																								"rotation" : 
+																								{
+																									"w" : 0.99751180410385132,
+																									"x" : 0.070334054529666901,
+																									"y" : 0.004735343623906374,
+																									"z" : -0.00097632803954184055
+																								},
+																								"scale" : 
+																								{
+																									"x" : 0.99999994039535522,
+																									"y" : 1.0,
+																									"z" : 1.0
+																								}
+																							}
+																						],
+																						"name" : "mixamorig:LeftHandMiddle3",
+																						"parent_name" : "mixamorig:LeftHandMiddle2",
+																						"position" : 
+																						{
+																							"x" : -7.8252770663311821e-07,
+																							"y" : 3.71319580078125,
+																							"z" : -9.7820966402650811e-06
+																						},
+																						"rotation" : 
+																						{
+																							"w" : 1.0,
+																							"x" : 0.0,
+																							"y" : 0.0,
+																							"z" : 0.0
+																						},
+																						"scale" : 
+																						{
+																							"x" : 1.0,
+																							"y" : 1.0,
+																							"z" : 1.0
+																						}
+																					}
+																				],
+																				"name" : "mixamorig:LeftHandMiddle2",
+																				"parent_name" : "mixamorig:LeftHandMiddle1",
+																				"position" : 
+																				{
+																					"x" : 1.331264657837344e-14,
+																					"y" : 5.7920989990234375,
+																					"z" : 3.2101428499865239e-15
+																				},
+																				"rotation" : 
+																				{
+																					"w" : 1.0,
+																					"x" : 0.0,
+																					"y" : 0.0,
+																					"z" : 0.0
+																				},
+																				"scale" : 
+																				{
+																					"x" : 1.0,
+																					"y" : 1.0,
+																					"z" : 1.0
+																				}
+																			}
+																		],
+																		"name" : "mixamorig:LeftHandMiddle1",
+																		"parent_name" : "mixamorig:LeftHand",
+																		"position" : 
+																		{
+																			"x" : -1.7266725080844481e-06,
+																			"y" : 10.490753173828125,
+																			"z" : -9.8587804586713901e-14
+																		},
+																		"rotation" : 
+																		{
+																			"w" : 1.0,
+																			"x" : 0.0,
+																			"y" : 0.0,
+																			"z" : 0.0
+																		},
+																		"scale" : 
+																		{
+																			"x" : 1.0,
+																			"y" : 1.0,
+																			"z" : 1.0
+																		}
+																	},
+																	{
+																		"child" : 
+																		[
+																			{
+																				"child" : 
+																				[
+																					{
+																						"child" : 
+																						[
+																							{
+																								"child" : [],
+																								"name" : "mixamorig:LeftHandRing4",
+																								"parent_name" : "mixamorig:LeftHandRing3",
+																								"position" : 
+																								{
+																									"x" : 1.5668040866459454e-12,
+																									"y" : 2.2807149887084961,
+																									"z" : -3.5291713995633245e-11
+																								},
+																								"rotation" : 
+																								{
+																									"w" : 0.99956691265106201,
+																									"x" : -0.028463020920753479,
+																									"y" : 0.0074079646728932858,
+																									"z" : 0.00098669854924082756
+																								},
+																								"scale" : 
+																								{
+																									"x" : 1.0,
+																									"y" : 1.0,
+																									"z" : 1.0
+																								}
+																							}
+																						],
+																						"name" : "mixamorig:LeftHandRing3",
+																						"parent_name" : "mixamorig:LeftHandRing2",
+																						"position" : 
+																						{
+																							"x" : -6.2850830317984219e-07,
+																							"y" : 3.7132034301757812,
+																							"z" : -2.3189742769276489e-14
+																						},
+																						"rotation" : 
+																						{
+																							"w" : 1.0,
+																							"x" : 0.0,
+																							"y" : 0.0,
+																							"z" : -1.0357761311752256e-05
+																						},
+																						"scale" : 
+																						{
+																							"x" : 1.0,
+																							"y" : 1.0,
+																							"z" : 1.0
+																						}
+																					}
+																				],
+																				"name" : "mixamorig:LeftHandRing2",
+																				"parent_name" : "mixamorig:LeftHandRing1",
+																				"position" : 
+																				{
+																					"x" : 1.6450452179389737e-14,
+																					"y" : 5.4451980590820312,
+																					"z" : 2.7243391733083183e-14
+																				},
+																				"rotation" : 
+																				{
+																					"w" : 1.0,
+																					"x" : 0.0,
+																					"y" : 0.0,
+																					"z" : 0.0
+																				},
+																				"scale" : 
+																				{
+																					"x" : 1.0,
+																					"y" : 1.0,
+																					"z" : 1.0
+																				}
+																			}
+																		],
+																		"name" : "mixamorig:LeftHandRing1",
+																		"parent_name" : "mixamorig:LeftHand",
+																		"position" : 
+																		{
+																			"x" : 2.3141477108001709,
+																			"y" : 10.240745544433594,
+																			"z" : 0.046035762876272202
+																		},
+																		"rotation" : 
+																		{
+																			"w" : 1.0,
+																			"x" : 0.0,
+																			"y" : 0.0,
+																			"z" : 0.0
+																		},
+																		"scale" : 
+																		{
+																			"x" : 1.0,
+																			"y" : 1.0,
+																			"z" : 1.0
+																		}
+																	},
+																	{
+																		"child" : 
+																		[
+																			{
+																				"child" : 
+																				[
+																					{
+																						"child" : 
+																						[
+																							{
+																								"child" : [],
+																								"name" : "mixamorig:LeftHandPinky4",
+																								"parent_name" : "mixamorig:LeftHandPinky3",
+																								"position" : 
+																								{
+																									"x" : -7.5903135439148173e-06,
+																									"y" : 1.6595464944839478,
+																									"z" : 4.2817050598387141e-06
+																								},
+																								"rotation" : 
+																								{
+																									"w" : 0.99914771318435669,
+																									"x" : 0.041062168776988983,
+																									"y" : 0.0041494346223771572,
+																									"z" : -0.00073912250809371471
+																								},
+																								"scale" : 
+																								{
+																									"x" : 1.0,
+																									"y" : 0.99999994039535522,
+																									"z" : 1.0
+																								}
+																							}
+																						],
+																						"name" : "mixamorig:LeftHandPinky3",
+																						"parent_name" : "mixamorig:LeftHandPinky2",
+																						"position" : 
+																						{
+																							"x" : -9.5367431640625e-07,
+																							"y" : 2.8112945556640625,
+																							"z" : -1.2004270190726918e-13
+																						},
+																						"rotation" : 
+																						{
+																							"w" : 1.0,
+																							"x" : 0.0,
+																							"y" : 0.0,
+																							"z" : 0.0
+																						},
+																						"scale" : 
+																						{
+																							"x" : 1.0,
+																							"y" : 1.0,
+																							"z" : 1.0
+																						}
+																					}
+																				],
+																				"name" : "mixamorig:LeftHandPinky2",
+																				"parent_name" : "mixamorig:LeftHandPinky1",
+																				"position" : 
+																				{
+																					"x" : 7.2213629520589961e-10,
+																					"y" : 3.676300048828125,
+																					"z" : -1.7869112087362179e-14
+																				},
+																				"rotation" : 
+																				{
+																					"w" : 1.0,
+																					"x" : 0.0,
+																					"y" : 0.0,
+																					"z" : 0.0
+																				},
+																				"scale" : 
+																				{
+																					"x" : 1.0,
+																					"y" : 1.0,
+																					"z" : 1.0
+																				}
+																			}
+																		],
+																		"name" : "mixamorig:LeftHandPinky1",
+																		"parent_name" : "mixamorig:LeftHand",
+																		"position" : 
+																		{
+																			"x" : 4.4184675216674805,
+																			"y" : 9.82025146484375,
+																			"z" : 0.2097320556640625
+																		},
+																		"rotation" : 
+																		{
+																			"w" : 1.0,
+																			"x" : 0.0,
+																			"y" : 0.0,
+																			"z" : 0.0
+																		},
+																		"scale" : 
+																		{
+																			"x" : 1.0,
+																			"y" : 1.0,
+																			"z" : 1.0
+																		}
+																	}
+																],
+																"name" : "mixamorig:LeftHand",
+																"parent_name" : "mixamorig:LeftForeArm",
+																"position" : 
+																{
+																	"x" : 4.8005432518039015e-07,
+																	"y" : 27.873802185058594,
+																	"z" : -2.0350829853764407e-13
+																},
+																"rotation" : 
+																{
+																	"w" : 1.0,
+																	"x" : 0.0,
+																	"y" : 0.0,
+																	"z" : 0.0
+																},
+																"scale" : 
+																{
+																	"x" : 1.0,
+																	"y" : 1.0,
+																	"z" : 1.0
+																}
+															}
+														],
+														"name" : "mixamorig:LeftForeArm",
+														"parent_name" : "mixamorig:LeftArm",
+														"position" : 
+														{
+															"x" : -3.8496317245062528e-09,
+															"y" : 27.687002182006836,
+															"z" : 1.934123163276763e-14
+														},
+														"rotation" : 
+														{
+															"w" : 1.0,
+															"x" : 0.0,
+															"y" : 0.0,
+															"z" : 0.0
+														},
+														"scale" : 
+														{
+															"x" : 1.0,
+															"y" : 1.0,
+															"z" : 1.0
+														}
+													}
+												],
+												"name" : "mixamorig:LeftArm",
+												"parent_name" : "mixamorig:LeftShoulder",
+												"position" : 
+												{
+													"x" : -4.2172440602064425e-15,
+													"y" : 12.498624801635742,
+													"z" : 2.0456800705839382e-15
+												},
+												"rotation" : 
+												{
+													"w" : 0.99639737606048584,
+													"x" : -0.04491918534040451,
+													"y" : -0.0032396202441304922,
+													"z" : 0.071861259639263153
+												},
+												"scale" : 
+												{
+													"x" : 0.99999994039535522,
+													"y" : 0.99999994039535522,
+													"z" : 1.0
+												}
+											}
+										],
+										"name" : "mixamorig:LeftShoulder",
+										"parent_name" : "mixamorig:Spine2",
+										"position" : 
+										{
+											"x" : 6.1441998481750488,
+											"y" : 10.855362892150879,
+											"z" : -0.56953084468841553
+										},
+										"rotation" : 
+										{
+											"w" : 0.35948652029037476,
+											"x" : 0.54709470272064209,
+											"y" : 0.59141027927398682,
+											"z" : -0.47084042429924011
+										},
+										"scale" : 
+										{
+											"x" : 1.0,
+											"y" : 1.0,
+											"z" : 1.0
+										}
+									},
+									{
+										"child" : 
+										[
+											{
+												"child" : 
+												[
+													{
+														"child" : 
+														[
+															{
+																"child" : 
+																[
+																	{
+																		"child" : 
+																		[
+																			{
+																				"child" : 
+																				[
+																					{
+																						"child" : 
+																						[
+																							{
+																								"child" : [],
+																								"name" : "mixamorig:RightHandThumb4",
+																								"parent_name" : "mixamorig:RightHandThumb3",
+																								"position" : 
+																								{
+																									"x" : 6.6092341018467171e-14,
+																									"y" : 2.653444766998291,
+																									"z" : -1.4228810187380536e-12
+																								},
+																								"rotation" : 
+																								{
+																									"w" : 0.98923009634017944,
+																									"x" : 0.018483169376850128,
+																									"y" : -0.12657751142978668,
+																									"z" : -0.071136161684989929
+																								},
+																								"scale" : 
+																								{
+																									"x" : 0.99999994039535522,
+																									"y" : 1.0,
+																									"z" : 1.0
+																								}
+																							}
+																						],
+																						"name" : "mixamorig:RightHandThumb3",
+																						"parent_name" : "mixamorig:RightHandThumb2",
+																						"position" : 
+																						{
+																							"x" : -1.4098925021244213e-05,
+																							"y" : 5.0932722091674805,
+																							"z" : -1.1644549886113964e-05
+																						},
+																						"rotation" : 
+																						{
+																							"w" : 1.0,
+																							"x" : -5.4394819017034024e-05,
+																							"y" : -2.7197447707294486e-05,
+																							"z" : -2.6695756787376013e-06
+																						},
+																						"scale" : 
+																						{
+																							"x" : 1.0,
+																							"y" : 1.0,
+																							"z" : 1.0
+																						}
+																					}
+																				],
+																				"name" : "mixamorig:RightHandThumb2",
+																				"parent_name" : "mixamorig:RightHandThumb1",
+																				"position" : 
+																				{
+																					"x" : 5.3134978174654811e-15,
+																					"y" : 4.5427312850952148,
+																					"z" : 3.9939148451136053e-14
+																				},
+																				"rotation" : 
+																				{
+																					"w" : 1.0,
+																					"x" : 0.0,
+																					"y" : 0.0,
+																					"z" : 0.0
+																				},
+																				"scale" : 
+																				{
+																					"x" : 1.0,
+																					"y" : 1.0,
+																					"z" : 1.0
+																				}
+																			}
+																		],
+																		"name" : "mixamorig:RightHandThumb1",
+																		"parent_name" : "mixamorig:RightHand",
+																		"position" : 
+																		{
+																			"x" : 2.3190536499023438,
+																			"y" : 2.5704345703125,
+																			"z" : 1.2451019287109375
+																		},
+																		"rotation" : 
+																		{
+																			"w" : 0.94008719921112061,
+																			"x" : 0.25189301371574402,
+																			"y" : 0.059463594108819962,
+																			"z" : -0.22192345559597015
+																		},
+																		"scale" : 
+																		{
+																			"x" : 1.0,
+																			"y" : 1.0,
+																			"z" : 1.0
+																		}
+																	},
+																	{
+																		"child" : 
+																		[
+																			{
+																				"child" : 
+																				[
+																					{
+																						"child" : 
+																						[
+																							{
+																								"child" : [],
+																								"name" : "mixamorig:RightHandIndex4",
+																								"parent_name" : "mixamorig:RightHandIndex3",
+																								"position" : 
+																								{
+																									"x" : 2.2027549868765955e-13,
+																									"y" : 2.3635549545288086,
+																									"z" : 8.325817249174583e-13
+																								},
+																								"rotation" : 
+																								{
+																									"w" : 0.99820524454116821,
+																									"x" : 0.059460517019033432,
+																									"y" : -0.0068955053575336933,
+																									"z" : 0.0017778973560780287
+																								},
+																								"scale" : 
+																								{
+																									"x" : 0.99999994039535522,
+																									"y" : 0.99999994039535522,
+																									"z" : 1.0
+																								}
+																							}
+																						],
+																						"name" : "mixamorig:RightHandIndex3",
+																						"parent_name" : "mixamorig:RightHandIndex2",
+																						"position" : 
+																						{
+																							"x" : -1.2364309043277899e-07,
+																							"y" : 3.385498046875,
+																							"z" : -1.6970137385716351e-14
+																						},
+																						"rotation" : 
+																						{
+																							"w" : 1.0,
+																							"x" : -6.3566731114406139e-05,
+																							"y" : 5.5553556199683385e-10,
+																							"z" : -8.7394073489122093e-06
+																						},
+																						"scale" : 
+																						{
+																							"x" : 1.0,
+																							"y" : 1.0,
+																							"z" : 1.0
+																						}
+																					}
+																				],
+																				"name" : "mixamorig:RightHandIndex2",
+																				"parent_name" : "mixamorig:RightHandIndex1",
+																				"position" : 
+																				{
+																					"x" : 3.3385380099554621e-15,
+																					"y" : 5.376800537109375,
+																					"z" : 1.1541564213135742e-14
+																				},
+																				"rotation" : 
+																				{
+																					"w" : 1.0,
+																					"x" : 0.0,
+																					"y" : 0.0,
+																					"z" : 0.0
+																				},
+																				"scale" : 
+																				{
+																					"x" : 1.0,
+																					"y" : 1.0,
+																					"z" : 1.0
+																				}
+																			}
+																		],
+																		"name" : "mixamorig:RightHandIndex1",
+																		"parent_name" : "mixamorig:RightHand",
+																		"position" : 
+																		{
+																			"x" : 2.2873482704162598,
+																			"y" : 10.577316284179688,
+																			"z" : 0.1753692626953125
+																		},
+																		"rotation" : 
+																		{
+																			"w" : 1.0,
+																			"x" : 0.0,
+																			"y" : 0.0,
+																			"z" : 0.0
+																		},
+																		"scale" : 
+																		{
+																			"x" : 1.0,
+																			"y" : 1.0,
+																			"z" : 1.0
+																		}
+																	},
+																	{
+																		"child" : 
+																		[
+																			{
+																				"child" : 
+																				[
+																					{
+																						"child" : 
+																						[
+																							{
+																								"child" : [],
+																								"name" : "mixamorig:RightHandMiddle4",
+																								"parent_name" : "mixamorig:RightHandMiddle3",
+																								"position" : 
+																								{
+																									"x" : -2.2441037472297615e-13,
+																									"y" : 2.6915268898010254,
+																									"z" : 1.0707584890631578e-14
+																								},
+																								"rotation" : 
+																								{
+																									"w" : 0.99912542104721069,
+																									"x" : -0.041217375546693802,
+																									"y" : -0.0067596319131553173,
+																									"z" : -0.0019831904210150242
+																								},
+																								"scale" : 
+																								{
+																									"x" : 1.0,
+																									"y" : 1.0,
+																									"z" : 0.99999994039535522
+																								}
+																							}
+																						],
+																						"name" : "mixamorig:RightHandMiddle3",
+																						"parent_name" : "mixamorig:RightHandMiddle2",
+																						"position" : 
+																						{
+																							"x" : 5.0229545051289418e-15,
+																							"y" : 3.7364044189453125,
+																							"z" : -4.2328337016006579e-15
+																						},
+																						"rotation" : 
+																						{
+																							"w" : 1.0,
+																							"x" : -6.3098770624492317e-05,
+																							"y" : -3.2838554098191253e-10,
+																							"z" : 5.2043096729903482e-06
+																						},
+																						"scale" : 
+																						{
+																							"x" : 1.0,
+																							"y" : 1.0,
+																							"z" : 1.0
+																						}
+																					}
+																				],
+																				"name" : "mixamorig:RightHandMiddle2",
+																				"parent_name" : "mixamorig:RightHandMiddle1",
+																				"position" : 
+																				{
+																					"x" : 4.9951917602264473e-11,
+																					"y" : 5.6167984008789062,
+																					"z" : 1.6494750308465242e-14
+																				},
+																				"rotation" : 
+																				{
+																					"w" : 1.0,
+																					"x" : 0.0,
+																					"y" : 0.0,
+																					"z" : 0.0
+																				},
+																				"scale" : 
+																				{
+																					"x" : 1.0,
+																					"y" : 1.0,
+																					"z" : 1.0
+																				}
+																			}
+																		],
+																		"name" : "mixamorig:RightHandMiddle1",
+																		"parent_name" : "mixamorig:RightHand",
+																		"position" : 
+																		{
+																			"x" : 1.430511474609375e-06,
+																			"y" : 10.779228210449219,
+																			"z" : -7.1054273576010019e-15
+																		},
+																		"rotation" : 
+																		{
+																			"w" : 1.0,
+																			"x" : 0.0,
+																			"y" : 0.0,
+																			"z" : 0.0
+																		},
+																		"scale" : 
+																		{
+																			"x" : 1.0,
+																			"y" : 1.0,
+																			"z" : 1.0
+																		}
+																	},
+																	{
+																		"child" : 
+																		[
+																			{
+																				"child" : 
+																				[
+																					{
+																						"child" : 
+																						[
+																							{
+																								"child" : [],
+																								"name" : "mixamorig:RightHandRing4",
+																								"parent_name" : "mixamorig:RightHandRing3",
+																								"position" : 
+																								{
+																									"x" : -3.5971843993093389e-13,
+																									"y" : 2.3531801700592041,
+																									"z" : -8.4938469018663865e-13
+																								},
+																								"rotation" : 
+																								{
+																									"w" : 0.99994784593582153,
+																									"x" : -0.0067976941354572773,
+																									"y" : -0.007614754606038332,
+																									"z" : -0.00035613606451079249
+																								},
+																								"scale" : 
+																								{
+																									"x" : 0.99999994039535522,
+																									"y" : 0.99999994039535522,
+																									"z" : 0.99999994039535522
+																								}
+																							}
+																						],
+																						"name" : "mixamorig:RightHandRing3",
+																						"parent_name" : "mixamorig:RightHandRing2",
+																						"position" : 
+																						{
+																							"x" : 6.5425712136857328e-07,
+																							"y" : 3.3916015625,
+																							"z" : 2.4919072339445181e-14
+																						},
+																						"rotation" : 
+																						{
+																							"w" : 1.0,
+																							"x" : -6.3991705246735364e-05,
+																							"y" : -4.4191303394391923e-10,
+																							"z" : 6.9057859946042299e-06
+																						},
+																						"scale" : 
+																						{
+																							"x" : 1.0,
+																							"y" : 1.0,
+																							"z" : 1.0
+																						}
+																					}
+																				],
+																				"name" : "mixamorig:RightHandRing2",
+																				"parent_name" : "mixamorig:RightHandRing1",
+																				"position" : 
+																				{
+																					"x" : 5.9448291660202639e-15,
+																					"y" : 5.4012985229492188,
+																					"z" : -1.1296083053593132e-14
+																				},
+																				"rotation" : 
+																				{
+																					"w" : 1.0,
+																					"x" : 0.0,
+																					"y" : 0.0,
+																					"z" : 0.0
+																				},
+																				"scale" : 
+																				{
+																					"x" : 1.0,
+																					"y" : 1.0,
+																					"z" : 1.0
+																				}
+																			}
+																		],
+																		"name" : "mixamorig:RightHandRing1",
+																		"parent_name" : "mixamorig:RightHand",
+																		"position" : 
+																		{
+																			"x" : -2.3498902320861816,
+																			"y" : 10.391914367675781,
+																			"z" : -0.10516357421875
+																		},
+																		"rotation" : 
+																		{
+																			"w" : 1.0,
+																			"x" : 0.0,
+																			"y" : 0.0,
+																			"z" : 0.0
+																		},
+																		"scale" : 
+																		{
+																			"x" : 1.0,
+																			"y" : 1.0,
+																			"z" : 1.0
+																		}
+																	},
+																	{
+																		"child" : 
+																		[
+																			{
+																				"child" : 
+																				[
+																					{
+																						"child" : 
+																						[
+																							{
+																								"child" : [],
+																								"name" : "mixamorig:RightHandPinky4",
+																								"parent_name" : "mixamorig:RightHandPinky3",
+																								"position" : 
+																								{
+																									"x" : 1.2831648754879719e-14,
+																									"y" : 1.6121188402175903,
+																									"z" : 9.8311398084860446e-13
+																								},
+																								"rotation" : 
+																								{
+																									"w" : 0.99634045362472534,
+																									"x" : 0.084955945611000061,
+																									"y" : -0.0089318351820111275,
+																									"z" : 0.0029094659257680178
+																								},
+																								"scale" : 
+																								{
+																									"x" : 1.0,
+																									"y" : 0.99999994039535522,
+																									"z" : 1.0
+																								}
+																							}
+																						],
+																						"name" : "mixamorig:RightHandPinky3",
+																						"parent_name" : "mixamorig:RightHandPinky2",
+																						"position" : 
+																						{
+																							"x" : -7.263246288857772e-07,
+																							"y" : 2.7819976806640625,
+																							"z" : -1.7515619488671363e-13
+																						},
+																						"rotation" : 
+																						{
+																							"w" : 1.0,
+																							"x" : -6.353107892209664e-05,
+																							"y" : 6.9226263610389083e-11,
+																							"z" : -1.0896441153818159e-06
+																						},
+																						"scale" : 
+																						{
+																							"x" : 1.0,
+																							"y" : 1.0,
+																							"z" : 1.0
+																						}
+																					}
+																				],
+																				"name" : "mixamorig:RightHandPinky2",
+																				"parent_name" : "mixamorig:RightHandPinky1",
+																				"position" : 
+																				{
+																					"x" : 2.8855651185545964e-15,
+																					"y" : 3.652801513671875,
+																					"z" : 3.4584982040774051e-15
+																				},
+																				"rotation" : 
+																				{
+																					"w" : 1.0,
+																					"x" : 0.0,
+																					"y" : 0.0,
+																					"z" : 0.0
+																				},
+																				"scale" : 
+																				{
+																					"x" : 1.0,
+																					"y" : 1.0,
+																					"z" : 1.0
+																				}
+																			}
+																		],
+																		"name" : "mixamorig:RightHandPinky1",
+																		"parent_name" : "mixamorig:RightHand",
+																		"position" : 
+																		{
+																			"x" : -4.3783411979675293,
+																			"y" : 9.791015625,
+																			"z" : 0.212921142578125
+																		},
+																		"rotation" : 
+																		{
+																			"w" : 1.0,
+																			"x" : 0.0,
+																			"y" : 0.0,
+																			"z" : 0.0
+																		},
+																		"scale" : 
+																		{
+																			"x" : 1.0,
+																			"y" : 1.0,
+																			"z" : 1.0
+																		}
+																	}
+																],
+																"name" : "mixamorig:RightHand",
+																"parent_name" : "mixamorig:RightForeArm",
+																"position" : 
+																{
+																	"x" : -4.76837158203125e-07,
+																	"y" : 27.873798370361328,
+																	"z" : -8.7463402406035007e-14
+																},
+																"rotation" : 
+																{
+																	"w" : 1.0,
+																	"x" : 0.0,
+																	"y" : 0.0,
+																	"z" : 0.0
+																},
+																"scale" : 
+																{
+																	"x" : 1.0,
+																	"y" : 1.0,
+																	"z" : 1.0
+																}
+															}
+														],
+														"name" : "mixamorig:RightForeArm",
+														"parent_name" : "mixamorig:RightArm",
+														"position" : 
+														{
+															"x" : 1.1037984762318764e-11,
+															"y" : 27.687000274658203,
+															"z" : -1.1502045890981593e-14
+														},
+														"rotation" : 
+														{
+															"w" : 1.0,
+															"x" : 0.0,
+															"y" : 0.0,
+															"z" : 0.0
+														},
+														"scale" : 
+														{
+															"x" : 1.0,
+															"y" : 1.0,
+															"z" : 1.0
+														}
+													}
+												],
+												"name" : "mixamorig:RightArm",
+												"parent_name" : "mixamorig:RightShoulder",
+												"position" : 
+												{
+													"x" : -5.3290705182007514e-15,
+													"y" : 12.502568244934082,
+													"z" : 0.0
+												},
+												"rotation" : 
+												{
+													"w" : 0.9963996410369873,
+													"x" : -0.044905383139848709,
+													"y" : 0.0032375932205468416,
+													"z" : -0.071838535368442535
+												},
+												"scale" : 
+												{
+													"x" : 1.0,
+													"y" : 0.99999994039535522,
+													"z" : 1.0
+												}
+											}
+										],
+										"name" : "mixamorig:RightShoulder",
+										"parent_name" : "mixamorig:Spine2",
+										"position" : 
+										{
+											"x" : -6.140200138092041,
+											"y" : 10.855362892150879,
+											"z" : -0.56953084468841553
+										},
+										"rotation" : 
+										{
+											"w" : -0.35950601100921631,
+											"x" : -0.54710233211517334,
+											"y" : 0.59140360355377197,
+											"z" : -0.47082516551017761
+										},
+										"scale" : 
+										{
+											"x" : 1.0,
+											"y" : 0.99999994039535522,
+											"z" : 1.0
+										}
+									}
+								],
+								"name" : "mixamorig:Spine2",
+								"parent_name" : "mixamorig:Spine1",
+								"position" : 
+								{
+									"x" : 8.0249328959780541e-08,
+									"y" : 13.700686454772949,
+									"z" : -1.021405182655144e-14
+								},
+								"rotation" : 
+								{
+									"w" : 0.994515061378479,
+									"x" : -0.10459338128566742,
+									"y" : 0.0,
+									"z" : 0.0
+								},
+								"scale" : 
+								{
+									"x" : 1.0,
+									"y" : 1.0,
+									"z" : 1.0
+								}
+							}
+						],
+						"name" : "mixamorig:Spine1",
+						"parent_name" : "mixamorig:Spine",
+						"position" : 
+						{
+							"x" : 2.7193200935471395e-07,
+							"y" : 16.254840850830078,
+							"z" : -1.0019806842955295e-13
+						},
+						"rotation" : 
+						{
+							"w" : 0.99911230802536011,
+							"x" : -0.042125672101974487,
+							"y" : 0.0,
+							"z" : 0.0
+						},
+						"scale" : 
+						{
+							"x" : 1.0,
+							"y" : 0.99999994039535522,
+							"z" : 0.99999994039535522
+						}
+					}
+				],
+				"name" : "mixamorig:Spine",
+				"parent_name" : "mixamorig:Hips",
+				"position" : 
+				{
+					"x" : 4.4154007809993345e-06,
+					"y" : 9.2263031005859375,
+					"z" : 1.5771000385284424
+				},
+				"rotation" : 
+				{
+					"w" : 0.99998700618743896,
+					"x" : -0.0050939321517944336,
+					"y" : 0.0,
+					"z" : 0.0
+				},
+				"scale" : 
+				{
+					"x" : 1.0,
+					"y" : 0.99999994039535522,
+					"z" : 0.99999994039535522
+				}
+			},
+			{
+				"child" : 
+				[
+					{
+						"child" : 
+						[
+							{
+								"child" : 
+								[
+									{
+										"child" : 
+										[
+											{
+												"child" : [],
+												"name" : "mixamorig:LeftToe_End",
+												"parent_name" : "mixamorig:LeftToeBase",
+												"position" : 
+												{
+													"x" : -7.5079170853455113e-14,
+													"y" : 10.32926082611084,
+													"z" : -3.1255458578959743e-15
+												},
+												"rotation" : 
+												{
+													"w" : 1.0,
+													"x" : 0.0,
+													"y" : 0.0,
+													"z" : 0.0
+												},
+												"scale" : 
+												{
+													"x" : 1.0,
+													"y" : 1.0,
+													"z" : 1.0
+												}
+											}
+										],
+										"name" : "mixamorig:LeftToeBase",
+										"parent_name" : "mixamorig:LeftFoot",
+										"position" : 
+										{
+											"x" : -2.18113863830003e-15,
+											"y" : 14.741159439086914,
+											"z" : 2.0806866717445376e-15
+										},
+										"rotation" : 
+										{
+											"w" : 0.88369441032409668,
+											"x" : 0.46802297234535217,
+											"y" : 0.0029099453240633011,
+											"z" : 0.005494394339621067
+										},
+										"scale" : 
+										{
+											"x" : 1.0,
+											"y" : 1.0,
+											"z" : 1.0
+										}
+									}
+								],
+								"name" : "mixamorig:LeftFoot",
+								"parent_name" : "mixamorig:LeftLeg",
+								"position" : 
+								{
+									"x" : 1.3776451962378504e-15,
+									"y" : 39.199169158935547,
+									"z" : -9.5160248496199695e-14
+								},
+								"rotation" : 
+								{
+									"w" : 0.94791197776794434,
+									"x" : 0.31847038865089417,
+									"y" : 0.0019538160413503647,
+									"z" : -0.0059722033329308033
+								},
+								"scale" : 
+								{
+									"x" : 1.0,
+									"y" : 1.0,
+									"z" : 1.0
+								}
+							}
+						],
+						"name" : "mixamorig:LeftLeg",
+						"parent_name" : "mixamorig:LeftUpLeg",
+						"position" : 
+						{
+							"x" : 1.0480680010655202e-14,
+							"y" : 41.765838623046875,
+							"z" : 1.2092532379083532e-13
+						},
+						"rotation" : 
+						{
+							"w" : 0.99981689453125,
+							"x" : -0.019135875627398491,
+							"y" : 1.1370765440332775e-13,
+							"z" : 0.00016050314297899604
+						},
+						"scale" : 
+						{
+							"x" : 1.0,
+							"y" : 1.0,
+							"z" : 1.0
+						}
+					}
+				],
+				"name" : "mixamorig:LeftUpLeg",
+				"parent_name" : "mixamorig:Hips",
+				"position" : 
+				{
+					"x" : 9.6337985992431641,
+					"y" : -3.2733078002929688,
+					"z" : -1.1548399925231934e-07
+				},
+				"rotation" : 
+				{
+					"w" : 7.7805110777262598e-05,
+					"x" : 5.1611880280688638e-07,
+					"y" : -0.0066490378230810165,
+					"z" : 0.99997788667678833
+				},
+				"scale" : 
+				{
+					"x" : 1.0,
+					"y" : 1.0,
+					"z" : 1.0
+				}
+			},
+			{
+				"child" : 
+				[
+					{
+						"child" : 
+						[
+							{
+								"child" : 
+								[
+									{
+										"child" : 
+										[
+											{
+												"child" : [],
+												"name" : "mixamorig:RightToe_End",
+												"parent_name" : "mixamorig:RightToeBase",
+												"position" : 
+												{
+													"x" : 4.1466829969749597e-14,
+													"y" : 10.32926082611084,
+													"z" : 2.6645352591003757e-15
+												},
+												"rotation" : 
+												{
+													"w" : 1.0,
+													"x" : 0.0,
+													"y" : 0.0,
+													"z" : 0.0
+												},
+												"scale" : 
+												{
+													"x" : 1.0,
+													"y" : 1.0,
+													"z" : 1.0
+												}
+											}
+										],
+										"name" : "mixamorig:RightToeBase",
+										"parent_name" : "mixamorig:RightFoot",
+										"position" : 
+										{
+											"x" : -1.5543122344752192e-15,
+											"y" : 14.741159439086914,
+											"z" : -8.8817841970012523e-16
+										},
+										"rotation" : 
+										{
+											"w" : 0.88369441032409668,
+											"x" : 0.46802297234535217,
+											"y" : 0.0029099453240633011,
+											"z" : 0.005494394339621067
+										},
+										"scale" : 
+										{
+											"x" : 1.0,
+											"y" : 1.0,
+											"z" : 1.0
+										}
+									}
+								],
+								"name" : "mixamorig:RightFoot",
+								"parent_name" : "mixamorig:RightLeg",
+								"position" : 
+								{
+									"x" : -1.0617049774064302e-15,
+									"y" : 39.199169158935547,
+									"z" : 1.27675647831893e-15
+								},
+								"rotation" : 
+								{
+									"w" : 0.9479181170463562,
+									"x" : 0.3184521496295929,
+									"y" : 0.0019537038169801235,
+									"z" : -0.0059722424484789371
+								},
+								"scale" : 
+								{
+									"x" : 1.0,
+									"y" : 0.99999994039535522,
+									"z" : 1.0
+								}
+							}
+						],
+						"name" : "mixamorig:RightLeg",
+						"parent_name" : "mixamorig:RightUpLeg",
+						"position" : 
+						{
+							"x" : -6.3810718861634363e-15,
+							"y" : 41.765846252441406,
+							"z" : 2.0317081350640365e-13
+						},
+						"rotation" : 
+						{
+							"w" : 0.9998176097869873,
+							"x" : -0.019099147990345955,
+							"y" : -2.2741514617632963e-13,
+							"z" : 0.0001604918361408636
+						},
+						"scale" : 
+						{
+							"x" : 1.0,
+							"y" : 1.0,
+							"z" : 1.0
+						}
+					}
+				],
+				"name" : "mixamorig:RightUpLeg",
+				"parent_name" : "mixamorig:Hips",
+				"position" : 
+				{
+					"x" : -9.6338005065917969,
+					"y" : -3.2732925415039062,
+					"z" : 1.1548399925231934e-07
+				},
+				"rotation" : 
+				{
+					"w" : 7.768592331558466e-05,
+					"x" : 5.1811662160616834e-07,
+					"y" : -0.0066665029153227806,
+					"z" : 0.99997776746749878
+				},
+				"scale" : 
+				{
+					"x" : 1.0,
+					"y" : 1.0,
+					"z" : 1.0
+				}
+			}
+		],
+		"name" : "mixamorig:Hips",
+		"parent_name" : "",
+		"position" : 
+		{
+			"x" : 3.2997527910083591e-07,
+			"y" : 96.3756103515625,
+			"z" : -0.035474393516778946
+		},
+		"rotation" : 
+		{
+			"w" : 1.0,
+			"x" : 0.0,
+			"y" : 0.0,
+			"z" : 0.0
+		},
+		"scale" : 
+		{
+			"x" : 1.0,
+			"y" : 1.0,
+			"z" : 1.0
+		}
+	}
+}

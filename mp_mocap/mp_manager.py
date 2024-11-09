@@ -9,6 +9,12 @@ class MediapipeModel(IntEnum):
     Pose = 0
     Holistic = auto()
 
+class InputType(IntEnum):
+    Video = 0
+    Webcam = auto()
+    Image = auto()
+    
+
 class MediapipeManager():
     def __init__(self):
         self.redis = None
@@ -29,6 +35,7 @@ class MediapipeManager():
         self.factor = 0.0
 
         self.model = MediapipeModel.Pose
+        self.input_type = InputType.Video
 
     def set_key(self, model_complexity=1, static_image_mode=False, min_detection_confidence=0.7):
         self.key = str(model_complexity) + ' ' + \
@@ -59,6 +66,12 @@ class MediapipeManager():
                 smooth_landmarks=True,
                 min_tracking_confidence=0.5
             )
+    
+    def set_webcam(self):
+        self.input_type = InputType.Webcam
+
+    def set_video(self):
+        self.input_type = InputType.Video
 
 
     def get_pose(self):

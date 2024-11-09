@@ -5,6 +5,7 @@
 #include <memory>
 #include <map>
 #include <unordered_map>
+#include "morph_target.h"
 
 namespace anim
 {
@@ -29,6 +30,9 @@ public:
 	void add_animations(const std::vector<std::shared_ptr<Animation>>& animations);
 	void add_animation(std::shared_ptr<Animation> animation);
 	void add_shader(const std::string& name, const char* vs_path, const char* fs_path);
+	void add_morph_target(Entity* entity,
+						  std::shared_ptr<Model>& model,
+						  std::vector<std::shared_ptr<MorphTarget>>& morph_targets);
 	void convert_to_entity(std::shared_ptr<Entity>& entity,
 						   std::shared_ptr<Model>& model,
 						   const std::shared_ptr<ModelNode>& model_node,

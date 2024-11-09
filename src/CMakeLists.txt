@@ -23,12 +23,12 @@ if(MSVC)
 
 
 elseif(WIN32)
-    target_compile_options(glcpp PRIVATE -Wall -Werror -std=c++17 -static)
+    target_compile_options(glcpp PRIVATE -Wall -Werror -std=c++20 -static)
 
     target_include_directories(glcpp PUBLIC ./ ./glcpp ../ ${CMAKE_HOME_DIRECTORY}/external)
     target_link_libraries(glcpp PUBLIC ${LIBs} assimp::assimp glm -lpthread -lgdi32 -lopengl32 -static)
 else()
-    target_compile_options(glcpp PRIVATE -Wall -Werror -std=c++17)
+    target_compile_options(glcpp PRIVATE -Wall -Werror -std=c++20)
 
     target_include_directories(glcpp PUBLIC ./ ./glcpp ../ ${CMAKE_HOME_DIRECTORY}/external)
     target_link_libraries(glcpp PUBLIC ${LIBs} assimp glm::glm -ldl -lpthread)
@@ -97,6 +97,7 @@ set(test_src
     animation/assimp_animation.cpp
     animation/bone.cpp
     animation/retargeter.cpp
+    animation/morph_target.cpp
 
     animation/animator.h
     animation/animation.h
@@ -104,6 +105,7 @@ set(test_src
     animation/json_animation.h
     animation/bone.h
     animation/retargeter.h
+    animation/morph_target.h
 )
 add_library(core STATIC ${test_src})
 
@@ -158,7 +160,7 @@ if(MSVC)
   endif()
   target_link_libraries(Anim  glcpp core py)
 elseif(WIN32)
-    target_compile_options(Anim  PRIVATE -Wall -Werror -std=c++17 -static)
+    target_compile_options(Anim  PRIVATE -Wall -Werror -std=c++20 -static)
     target_link_libraries(Anim  glcpp)
     target_include_directories(Anim  PUBLIC ./)
 else()

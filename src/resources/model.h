@@ -87,6 +87,10 @@ public:
 	void get_ai_node_for_anim(aiNode* ai_node, ModelNode* model_node, aiNode* parent_ai_node);
 	void get_ai_root_node_for_anim(aiNode* ai_node);
 	const std::string& get_name() const;
+	const std::unordered_map<std::string, std::string>& get_mesh_name_node_name_map() const
+	{
+		return mesh_name_node_name_map_;
+	}
 
 private:
 	void load_model(const char* path, const aiScene* scene);
@@ -121,8 +125,11 @@ private:
 												const aiScene* scene,
 												aiTextureType type,
 												std::string typeName);
+
+private:
 	std::shared_ptr<ModelNode> root_node_;
 	std::unordered_map<std::string, BoneInfo> bone_info_map_;
+	std::unordered_map<std::string, std::string> mesh_name_node_name_map_;
 	std::filesystem::path directory_{};
 	std::vector<Texture> textures_loaded_;
 	std::string name_{};

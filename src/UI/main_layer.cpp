@@ -71,12 +71,12 @@ void MainLayer::init(GLFWwindow* window)
 }
 void MainLayer::init_bookmark()
 {
-	// define style for all directories
-	ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByTypeDir, "", ImVec4(0.02f, 0.02f, 0.02f, 1.0f),
-											  ICON_MD_FOLDER);
-	// define style for all files
-	ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByTypeFile, "", ImVec4(0.02f, .02f, 0.02f, 1.0f),
-											  ICON_IGFD_FILE);
+	//// define style for all directories
+	// ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByTypeDir, "", ImVec4(0.02f, 0.02f, 0.02f, 1.0f),
+	//										  ICON_MD_FOLDER);
+	//// define style for all files
+	// ImGuiFileDialog::Instance()->SetFileStyle(IGFD_FileStyleByTypeFile, "", ImVec4(0.02f, .02f, 0.02f, 1.0f),
+	//										  ICON_IGFD_FILE);
 
 	std::string group_name = "Bookmark";
 	const size_t display_order = 0;

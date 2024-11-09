@@ -1,5 +1,8 @@
 #include "assimp_animation.h"
+
+#include "log.h"
 #include "../util/utility.h"
+#include "morph_target.h"
 
 namespace fs = std::filesystem;
 
@@ -10,9 +13,7 @@ AssimpAnimation::AssimpAnimation(const aiAnimation* animation, const aiScene* sc
 	init_animation(animation, scene, path);
 }
 
-AssimpAnimation::~AssimpAnimation()
-{
-}
+AssimpAnimation::~AssimpAnimation() = default;
 
 void AssimpAnimation::init_animation(const aiAnimation* animation, const aiScene* scene, const char* path)
 {
@@ -58,4 +59,5 @@ void AssimpAnimation::process_bindpose(const aiNode* node)
 		}
 	}
 }
+
 }	 // namespace anim
