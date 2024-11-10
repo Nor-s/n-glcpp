@@ -17,6 +17,7 @@
 #include "util/log.h"
 #include "UI/ui_context.h"
 #include "event/event_history.h"
+#include "event/edit_function.h"
 #include "resources/exporter.h"
 
 #include "cpython/py_manager.h"
@@ -180,51 +181,23 @@ void App::process_timeline_context()
 	{
 		scenes_[current_scene_idx_]->set_selected_entity(entity_context.selected_id);
 	}
-	static uint32_t count = 0u;
+	static uint32_t input_count = 0u;
 	is_manipulated_ = entity_context.is_manipulated;
 	if (entity_context.is_changed_transform && time_context.is_recording)
 	{
-		auto selected_entity = scenes_[current_scene_idx_]->get_mutable_selected_entity();
-		auto& before_transform = selected_entity->get_local();
-		selected_entity->set_local(entity_context.new_transform);
-		if (auto armature = selected_entity->get_component<anim::ArmatureComponent>(); armature)
-		{
-			armature->insert_and_update_bone();
-			if (count == 0u)
-			{
-				history_->push(std::make_unique<anim::BoneChangeEvent>(
-					scenes_[current_scene_idx_].get(),
-					scenes_[current_scene_idx_]->get_mutable_ref_shared_resources().get(), selected_entity->get_id(),
-					selected_entity->get_mutable_root()
-						->get_component<anim::AnimationComponent>()
-						->get_animation()
-						->get_id(),
-					before_transform, armature->get_pose()->get_animator()->get_current_time()));
-			}
-			count++;
-		}
+		auto* selected_entity = scenes_[current_scene_idx_]->get_mutable_selected_entity();
+		edit::Change_EntityTransform(selected_entity, entity_context.new_transform, input_count == 0);
+		input_count++;
 	}
 	else
 	{
-		count = 0u;
+		input_count = 0u;
 	}
-	if (time_context.is_delete_current_frame)
+
+	if (time_context.is_delete_current_animation_frame)
 	{
-		anim::LOG("delete current bone");
 		auto selected_entity = scenes_[current_scene_idx_]->get_mutable_selected_entity();
-		auto& before_transform = selected_entity->get_local();
-		if (auto armature = selected_entity->get_component<anim::ArmatureComponent>(); armature)
-		{
-			armature->get_pose()->sub_current_bone(armature->get_name());
-			history_->push(std::make_unique<anim::BoneChangeEvent>(
-				scenes_[current_scene_idx_].get(),
-				scenes_[current_scene_idx_]->get_mutable_ref_shared_resources().get(), selected_entity->get_id(),
-				selected_entity->get_mutable_root()
-					->get_component<anim::AnimationComponent>()
-					->get_animation()
-					->get_id(),
-				before_transform, armature->get_pose()->get_animator()->get_current_time()));
-		}
+		edit::Delete_AnimationFrame(selected_entity);
 	}
 }
 
@@ -454,4 +427,17 @@ void App::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	if (app->scenes_.size() > app->current_scene_idx_ && app->ui_ &&
 		app->ui_->is_scene_layer_hovered("scene" + std::to_string(app->current_scene_idx_ + 1)))
 		app->scenes_[app->current_scene_idx_]->get_mutable_ref_camera()->process_mouse_scroll(yoffset);
+}
+
+void App::history_push(std::unique_ptr<anim::Event> event)
+{
+	history_->push(std::move(event));
+}
+
+Scene* App::get_current_scene() const
+{
+	if (scenes_.size() <= current_scene_idx_ || current_scene_idx_ < 0)
+		return nullptr;
+
+	return scenes_[current_scene_idx_].get();
 }

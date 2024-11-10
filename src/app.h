@@ -16,6 +16,7 @@ namespace anim
 {
 class SharedResources;
 class EventHistoryQueue;
+class Event;
 }	 // namespace anim
 
 namespace ui
@@ -46,6 +47,11 @@ public:
 	static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 	static void mouse_btn_callback(GLFWwindow* window, int button, int action, int mods);
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
+	void history_push(std::unique_ptr<anim::Event> event);
+	Scene* get_current_scene() const;
+
+private:
 	// mouse event
 	bool is_pressed_ = false;
 	bool is_pressed_scroll_ = false;
@@ -77,6 +83,7 @@ private:
 	void process_python_context();
 
 	void import_model_or_animation(const char* const path);
+
 	std::shared_ptr<anim::SharedResources> shared_resources_;
 	std::unique_ptr<anim::EventHistoryQueue> history_;
 };

@@ -314,7 +314,7 @@ void TimelineLayer::draw_keyframe_popup(UiContext& ui_context)
 		if (ImGui::Button("Delete") && !ui_context.timeline.is_current_frame_changed)
 		{
 			LOG("clicked button");
-			ui_context.timeline.is_delete_current_frame = true;
+			ui_context.timeline.is_delete_current_animation_frame = true;
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();

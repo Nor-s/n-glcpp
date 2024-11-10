@@ -141,6 +141,9 @@ add_executable(Anim
 event/event_history.h
 event/event_history.cpp
 
+event/edit_function.cpp
+event/edit_function.h
+
 ./app.cpp
 ./scene/scene.hpp
 ./scene/main_scene.cpp

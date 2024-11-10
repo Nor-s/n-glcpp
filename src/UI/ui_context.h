@@ -32,7 +32,7 @@ struct TimelineContext
 	int current_frame{0};
 	bool is_forward{false};
 	bool is_backward{false};
-	bool is_delete_current_frame{false};
+	bool is_delete_current_animation_frame{false};
 	TimelineContext()
 		: is_recording(false)
 		, is_clicked_play_back(false)
@@ -45,7 +45,7 @@ struct TimelineContext
 		, current_frame(0)
 		, is_forward(false)
 		, is_backward(false)
-		, is_delete_current_frame(false)
+		, is_delete_current_animation_frame(false)
 	{
 	}
 };
