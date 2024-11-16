@@ -11,7 +11,7 @@ class Entity;
 namespace edit
 {
 
-void Change_EntityTransform(anim::Entity* entity, const glm::mat4& transform, bool b_is_push_history);
+void Update_EntitiesTransform(anim::Entity* entity, const glm::mat4& transform, bool b_is_push_history);
 void Delete_AnimationFrame(anim::Entity* entity, bool b_is_push_history = true);
 
 }	 // namespace edit

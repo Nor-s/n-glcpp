@@ -186,7 +186,7 @@ void App::process_timeline_context()
 	if (entity_context.is_changed_transform && time_context.is_recording)
 	{
 		auto* selected_entity = scenes_[current_scene_idx_]->get_mutable_selected_entity();
-		edit::Change_EntityTransform(selected_entity, entity_context.new_transform, input_count == 0);
+		edit::Update_EntitiesTransform(selected_entity, entity_context.new_transform, input_count == 0);
 		input_count++;
 	}
 	else

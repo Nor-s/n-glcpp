@@ -68,6 +68,10 @@ public:
 	{
 		return parent_;
 	}
+	const Entity* get_parent() const
+	{
+		return parent_;
+	}
 	Entity* get_mutable_root()
 	{
 		return root_;

@@ -9,12 +9,16 @@
 #include <entity/components/renderable/mesh_component.h>
 #include <entity/components/renderable/armature_component.h>
 #include <entity/components/transform_component.h>
+#include <entity/components/ik_control_component.h>
 
 #include <memory>
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui/imgui_internal.h>
 #include <imgui/icons/icons.h>
+
+#include "glm/ext.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 namespace ui
 {
@@ -111,7 +115,13 @@ void SceneLayer::draw_gizmo(Scene* scene, UiContext& ui_context)
 
 	if (selected_entity && current_gizmo_operation_ != ImGuizmo::OPERATION::NONE)
 	{
-		auto& transform = selected_entity->get_world_transformation();
+		auto* ik_control = selected_entity->get_component<anim::IKControlComponent>();
+		auto transform = selected_entity->get_world_transformation();
+		if (ik_control != nullptr)
+		{
+			transform = ik_control->get_world_transformation();
+		}
+
 		glm::mat4 object_matrix = transform;
 		float* object_mat_ptr = static_cast<float*>(glm::value_ptr(object_matrix));
 
@@ -131,7 +141,13 @@ void SceneLayer::draw_gizmo(Scene* scene, UiContext& ui_context)
 					ui_context.timeline.is_stop = true;
 				}
 			}
+
 			is_hovered_ = false;
+		}
+		if (ik_control)
+		{
+			ik_control->set_snapping(ui_context.entity.is_manipulated);
+			ik_control->set_world_transformation(object_matrix);
 		}
 	}
 	ImGuizmo::ViewManipulate(cameraView, 8.0f, ImVec2{scene_window_right_ - 128.0f, scene_window_top_ + 16.0f},
