@@ -69,6 +69,7 @@ set(test_src
     entity/components/pose_component.cpp
     entity/components/renderable/armature_component.cpp
     entity/components/renderable/mesh_component.cpp
+    entity/components/renderable/polygon_component.cpp
     
     entity/entity.h
     entity/components/component.h
@@ -79,6 +80,7 @@ set(test_src
     entity/components/pose_component.h
     entity/components/renderable/mesh_component.h
     entity/components/renderable/armature_component.h
+    entity/components/renderable/polygon_component.h
 
     resources/exporter.cpp
     resources/exporter.h

@@ -11,6 +11,7 @@
 #include <../entity/entity.h>
 #include <../entity/components/pose_component.h>
 #include <../entity/components/renderable/armature_component.h>
+#include "../entity/components/renderable/polygon_component.h"
 
 namespace glcpp
 {
@@ -20,6 +21,21 @@ namespace anim
 {
 class Framebuffer;
 }
+
+struct DebugInfo
+{
+	inline static float default_scale = 10.0f;
+	DebugInfo(const glm::mat4& a_transform,
+			  anim::PolygonType type = anim::PolygonType::BI_PYRAMID,
+			  uint32_t color = 0xff0000ff)
+		: transform(a_transform), type(type), color(color)
+	{
+		transform *= glm::scale(glm::mat4(1.0f), glm::vec3(default_scale));
+	}
+	anim::PolygonType type;
+	glm::mat4 transform;
+	uint32_t color = 0xff0000ff;
+};
 
 class Scene
 {
@@ -83,12 +99,32 @@ public:
 		}
 		set_selected_entity(resources_->get_entity(id));
 	}
+	void draw_debug(const DebugInfo& debug_info)
+	{
+		debug_infos_.push_back(debug_info);
+	}
+
+protected:
+	void draw_debug()
+	{
+		anim::Entity* debug_entity = resources_->get_debug_entity();
+		for (auto& debug_info : debug_infos_)
+		{
+			debug_entity->get_component<anim::PolygonComponent>()
+				->set_type(debug_info.type)
+				->set_color(debug_info.color);
+			debug_entity->set_local(debug_info.transform);
+			debug_entity->update();
+		}
+		debug_infos_.clear();
+	}
 
 protected:
 	anim::Entity* selected_entity_{nullptr};
 	std::shared_ptr<anim::SharedResources> resources_;
 	std::shared_ptr<anim::Framebuffer> framebuffer_;
 	std::shared_ptr<glcpp::Camera> camera_;
+	std::vector<DebugInfo> debug_infos_;
 	float delta_time_ = 0.0f;
 	uint32_t width_ = 800;
 	uint32_t height_ = 600;

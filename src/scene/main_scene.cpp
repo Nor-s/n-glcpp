@@ -83,6 +83,7 @@ void MainScene::draw_to_framebuffer()
 	{
 		resources_->update();
 		grid_framebuffer_->draw(*grid_shader);
+		draw_debug();
 	}
 	framebuffer_->unbind();
 	if (selected_entity_)
