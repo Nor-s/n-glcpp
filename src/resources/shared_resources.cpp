@@ -1,4 +1,5 @@
 #include "shared_resources.h"
+#include "shared_resources.h"
 
 #include "../animation/animator.h"
 #include "../animation/animation.h"
@@ -12,6 +13,7 @@
 #include "../entity/components/pose_component.h"
 #include "../entity/components/renderable/mesh_component.h"
 #include "../entity/components/renderable/armature_component.h"
+#include "../entity/components/renderable/polygon_component.h"
 #include "../entity/components/animation_component.h"
 #include "../entity/components/transform_component.h"
 #include <glm/glm.hpp>
@@ -27,9 +29,10 @@ SharedResources::SharedResources()
 
 	init_animator();
 	init_shader();
-	root_entity_.reset(new Entity("All", single_entity_list_.size()));
+	root_entity_.reset(new Entity("All", entity_list_.size()));
 	root_entity_->set_root(root_entity_.get());
-	single_entity_list_.push_back(root_entity_);
+	entity_list_.push_back(root_entity_);
+
 	ArmatureComponent::setShape(gl::CreateBiPyramid());
 }
 SharedResources::~SharedResources()
@@ -124,6 +127,7 @@ void SharedResources::init_shader()
 	add_shader("armature", "./resources/shaders/armature.vs", "./resources/shaders/phong_model.fs");
 	add_shader("model", "./resources/shaders/simple_model.vs", "./resources/shaders/phong_model.fs");
 	add_shader("animation", "./resources/shaders/animation_skinning.vs", "./resources/shaders/phong_model.fs");
+	add_shader("debug", "./resources/shaders/armature.vs", "./resources/shaders/phong_model.fs");
 
 	add_shader("framebuffer", "./resources/shaders/simple_framebuffer.vs", "./resources/shaders/simple_framebuffer.fs");
 	add_shader("grid", "./resources/shaders/grid.vs", "./resources/shaders/grid.fs");
@@ -135,16 +139,19 @@ void SharedResources::init_shader()
 	auto animation_id = get_mutable_shader("animation")->get_id();
 	auto armature_id = get_mutable_shader("armature")->get_id();
 	auto grid_id = get_mutable_shader("grid")->get_id();
+	auto debug_id = get_mutable_shader("debug")->get_id();
 
 	unsigned int uniform_block_id_model = glGetUniformBlockIndex(model_id, "Matrices");
 	unsigned int uniform_block_id_animation = glGetUniformBlockIndex(animation_id, "Matrices");
 	unsigned int uniform_block_id_armature = glGetUniformBlockIndex(armature_id, "Matrices");
 	unsigned int uniform_block_id_grid = glGetUniformBlockIndex(grid_id, "Matrices");
+	unsigned int uniform_block_id_debug = glGetUniformBlockIndex(debug_id, "Matrices");
 
 	glUniformBlockBinding(model_id, uniform_block_id_model, 0);
 	glUniformBlockBinding(animation_id, uniform_block_id_animation, 0);
 	glUniformBlockBinding(armature_id, uniform_block_id_armature, 0);
 	glUniformBlockBinding(grid_id, uniform_block_id_grid, 0);
+	glUniformBlockBinding(debug_id, uniform_block_id_debug, 0);
 
 	glGenBuffers(1, &matrices_UBO_);
 	glBindBuffer(GL_UNIFORM_BUFFER, matrices_UBO_);
@@ -191,7 +198,7 @@ void SharedResources::convert_to_entity(std::shared_ptr<Entity>& entity,
 {
 	const std::string& name = model_node->name;
 	LOG("- - TO ENTITY: " + name);
-	uint32_t entity_id = single_entity_list_.size();
+	uint32_t entity_id = entity_list_.size();
 	entity.reset(new Entity(name, entity_id, parent_entity));
 	if (!root_entity)
 	{
@@ -199,7 +206,7 @@ void SharedResources::convert_to_entity(std::shared_ptr<Entity>& entity,
 		entity->set_parent(entity.get());
 	}
 	entity->set_root(root_entity);
-	single_entity_list_.push_back(entity);
+	entity_list_.push_back(entity);
 
 	// mesh component
 	if (model_node->meshes.size() != 0)
@@ -286,11 +293,23 @@ void SharedResources::convert_to_entity(std::shared_ptr<Entity>& entity,
 }
 Entity* SharedResources::get_entity(int id)
 {
-	if (id >= 0 && id < single_entity_list_.size())
+	if (id >= 0 && id < entity_list_.size())
 	{
-		return single_entity_list_[id].get();
+		return entity_list_[id].get();
 	}
 	return nullptr;
+}
+Entity* SharedResources::get_debug_entity()
+{
+	if (debug_entity_ == nullptr)
+	{
+		debug_entity_.reset(new Entity("Debug", -1));
+		debug_entity_->add_component<PolygonComponent>()
+			->set_shader(shaders_["debug"].get())
+			->set_type(PolygonType::BI_PYRAMID);
+	}
+
+	return debug_entity_.get();
 }
 Animation* SharedResources::get_mutable_animation(int id)
 {

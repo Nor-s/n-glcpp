@@ -44,6 +44,7 @@ public:
 	Animation* get_mutable_animation(int id);
 
 	Entity* get_entity(int id);
+	Entity* get_debug_entity();
 
 	std::unique_ptr<PostProcessing> mPostProcessing;
 
@@ -54,9 +55,9 @@ private:
 	std::vector<std::shared_ptr<Animation>> animations_;
 	std::map<std::string, std::shared_ptr<Shader>> shaders_;
 	std::unordered_map<int, std::string> model_path_;
-	std::vector<std::shared_ptr<Entity>> single_entity_list_;
+	std::vector<std::shared_ptr<Entity>> entity_list_;
 	std::shared_ptr<Entity> root_entity_;
-	std::unique_ptr<Mesh> bone_;
+	std::shared_ptr<Entity> debug_entity_;
 	float dt_ = 0.0f;
 	unsigned int matrices_UBO_;
 };
