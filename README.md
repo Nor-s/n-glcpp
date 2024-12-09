@@ -20,6 +20,9 @@
 |![multiple](https://github.com/user-attachments/assets/5d84c4e9-d748-4c3c-8066-71fbc269d626) | ![export](https://github.com/user-attachments/assets/10f42e70-8d13-434b-b535-7b9ef23b25f2) |
 
 
+| CCDIK |
+|-|
+| ![IK](https://github.com/user-attachments/assets/33419952-1904-4037-bec6-8b5b08f66141) |
 
 
 ## **Demo**
