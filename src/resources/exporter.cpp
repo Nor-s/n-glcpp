@@ -217,8 +217,7 @@ void init_name(Entity* entity, Json::Value& name_list)
 void init_json_pose(Json::Value& world_value, Json::Value& local_value, Entity* entity, const glm::vec3& root_pos)
 {
 	auto transformation = entity->get_component<ArmatureComponent>()->get_model();
-	TransformComponent transform{};
-	transform.set_transform(transformation);
+	TransformComponent transform(transformation);
 	glm::vec3 pos = transform.get_translation() - root_pos;
 	world_value[entity->get_name()] = get_vec_json(pos);
 
@@ -261,9 +260,8 @@ void to_json_all_animation_data(const char* save_path, Entity* entity, SharedRes
 			Json::Value pose;
 			animator->set_current_time(time);
 			pose_comp->update();
-			TransformComponent hips{};
-			hips.set_transform(pose_root_entity->get_component<ArmatureComponent>()->get_model());
-			init_json_pose(pose["world"], pose["rotation"], pose_root_entity, hips.mTranslation);
+			TransformComponent hips(pose_root_entity->get_component<ArmatureComponent>()->get_model());
+			init_json_pose(pose["world"], pose["rotation"], pose_root_entity, hips.get_translation());
 			ret["pose"].append(pose);
 			pose_size++;
 		}

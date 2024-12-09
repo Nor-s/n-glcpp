@@ -1,4 +1,11 @@
 #include "transform_component.h"
+#include "transform_component.h"
+#include "transform_component.h"
+#include "transform_component.h"
+#include "transform_component.h"
+#include "transform_component.h"
+#include "transform_component.h"
+#include "transform_component.h"
 #include "../../util/utility.h"
 
 #include <iostream>
@@ -10,54 +17,87 @@
 
 namespace anim
 {
-glm::mat4 TransformComponent::get_mat4() const
+TransformComponent::TransformComponent(const glm::mat4& transform)
 {
-	glm::mat4 rotation = glm::toMat4(glm::quat(mRotation));
+	set_transform(transform);
+}
+glm::mat4 TransformComponent::update_mat4() const
+{
+	glm::mat4 rotation = glm::mat4(quat);
 
-	return glm::translate(glm::mat4(1.0f), mTranslation) * rotation * glm::scale(glm::mat4(1.0f), mScale);
+	transform = glm::translate(glm::mat4(1.0f), translation) * rotation * glm::scale(glm::mat4(1.0f), scale);
+	return transform;
+}
+const glm::mat4& TransformComponent::get_mat4() const
+{
+	return transform;
 }
 const glm::vec3& TransformComponent::get_translation() const
 {
-	return mTranslation;
+	return translation;
 }
 const glm::vec3& TransformComponent::get_rotation() const
 {
-	return mRotation;
+	return rotation;
+}
+const glm::quat& TransformComponent::get_quat() const
+{
+	return quat;
 }
 const glm::vec3& TransformComponent::get_scale() const
 {
-	return mScale;
+	return scale;
 }
 TransformComponent& TransformComponent::set_translation(const glm::vec3& vec)
 {
-	mTranslation = vec;
+	translation = vec;
+	update_mat4();
 	return *this;
 }
 TransformComponent& TransformComponent::set_scale(const glm::vec3& vec)
 {
-	mScale = vec;
-
+	scale = vec;
+	update_mat4();
 	return *this;
 }
 TransformComponent& TransformComponent::set_scale(float scale)
 {
 	set_scale(glm::vec3{scale, scale, scale});
+	update_mat4();
 	return *this;
 }
-
 TransformComponent& TransformComponent::set_rotation(const glm::vec3& vec)
 {
-	mRotation = vec;
-
+	rotation = vec;
+	quat = glm::normalize(glm::quat(rotation));
+	update_mat4();
+	return *this;
+}
+TransformComponent& TransformComponent::set_quat(const glm::quat& q)
+{
+	quat = glm::normalize(q);
+	rotation = glm::eulerAngles(q);
+	update_mat4();
 	return *this;
 }
 TransformComponent& TransformComponent::set_transform(const glm::mat4& mat)
 {
+	transform = mat;
 	auto [t, r, s] = DecomposeTransform(mat);
-	mTranslation = t;
-	mRotation = glm::eulerAngles(r);
-	mScale = s;
+	translation = t;
+	quat = r;
+	rotation = glm::eulerAngles(r);
+	scale = s;
 	return *this;
+}
+TransformComponent& TransformComponent::set_transform(const TransformComponent& t)
+{
+	return set_transform(t.transform);
+}
+
+glm::mat4 TransformComponent::get_relative_transform(const TransformComponent& t) const
+{
+	return glm::inverse(get_mat4()) * t.transform;
 }
 
 }	 // namespace anim

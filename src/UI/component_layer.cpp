@@ -24,11 +24,6 @@ void ComponentLayer::draw(ComponentContext& context, Scene* scene)
 	Entity* current_entity = scene->get_mutable_selected_entity();
 	SharedResources* resources = scene->get_mutable_ref_shared_resources().get();
 
-	if (current_entity != nullptr)
-	{
-		anim::LOG(current_entity->get_name().c_str());
-	}
-
 	if (ImGui::Begin("Component"))
 	{
 		if (current_entity)
@@ -138,20 +133,19 @@ void ComponentLayer::draw_transform(anim::Entity* entity)
 {
 	auto& world = entity->get_world_transformation();
 	auto& local = entity->get_local();
-	TransformComponent transform;
-	transform.set_transform(world);
+	TransformComponent transform(world);
 	ImGui::Text("World");
-	DragPropertyXYZ("Translation", transform.mTranslation);
-	DragPropertyXYZ("Rotation", transform.mRotation);
-	DragPropertyXYZ("Scale", transform.mScale);
+	DragPropertyXYZ("Translation", const_cast<glm::vec3&>(transform.get_translation()));
+	DragPropertyXYZ("Rotation", const_cast<glm::vec3&>(transform.get_rotation()));
+	DragPropertyXYZ("Scale", const_cast<glm::vec3&>(transform.get_scale()));
 
 	ImGui::Separator();
 
 	transform.set_transform(local);
 	ImGui::Text("Local");
-	DragPropertyXYZ("Translation", transform.mTranslation);
-	DragPropertyXYZ("Rotation", transform.mRotation);
-	DragPropertyXYZ("Scale", transform.mScale);
+	DragPropertyXYZ("Translation", const_cast<glm::vec3&>(transform.get_translation()));
+	DragPropertyXYZ("Rotation", const_cast<glm::vec3&>(transform.get_rotation()));
+	DragPropertyXYZ("Scale", const_cast<glm::vec3&>(transform.get_scale()));
 	// entity->set_local(transform.get_mat4());
 }
 void ComponentLayer::draw_transform_reset_button(anim::TransformComponent& transform)
