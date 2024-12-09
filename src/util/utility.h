@@ -3,6 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/common.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 
@@ -107,6 +108,46 @@ inline glm::vec3 GetRelativePos(const glm::vec4& world_pos, const glm::mat4& wor
 
 	glm::vec3 x = glm::inverse(A) * glm::vec3(b);
 	return x;
+}
+
+// [0, 360)
+inline double ClampAxis(double degree)
+{
+	degree = glm::fmod(degree, 360.0);
+	if (degree < 0.00)
+	{
+		degree += 360.0;
+	}
+	return degree;
+}
+
+// (-180, 180]
+inline double NormalizeAxis(double degree)
+{
+	degree = ClampAxis(degree);
+	if (degree > 180.0)
+	{
+		degree -= 360.0;
+	}
+	return degree;
+}
+
+inline double ClampAngle(double degrees, double min_degree, double max_degree)
+{
+	const double max_delta = ClampAxis(max_degree - min_degree) * 0.5;
+	const double range_center = ClampAxis(min_degree + max_delta);
+	const double delta = NormalizeAxis(degrees - range_center);
+
+	if (delta > max_delta)
+	{
+		degrees = range_center + max_delta;
+	}
+	else if (delta < -max_delta)
+	{
+		degrees = range_center - max_delta;
+	}
+
+	return NormalizeAxis(degrees);
 }
 }	 // namespace anim
 #endif

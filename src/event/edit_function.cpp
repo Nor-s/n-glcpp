@@ -4,6 +4,7 @@
 #include "entity/components/animation_component.h"
 #include "animation/animation.h"
 #include "entity/components/pose_component.h"
+#include "entity/components/transform_component.h"
 #include "entity/components/ik_control_component.h"
 #include "entity/components/renderable/armature_component.h"
 #include "util/utility.h"
@@ -31,34 +32,17 @@ namespace edit
 const glm::quat CalcQuat(glm::vec3 s, glm::vec3 e)
 {
 	auto cos_theta = glm::dot(s, e);
-	auto axis = glm::normalize(glm::cross(s, e));
+	auto axis = glm::cross(s, e);
+	auto angle = glm::acos(cos_theta);
+	auto degree_angle = anim::ClampAngle(glm::degrees(angle), -20.0, 20.0);
+	angle = glm::radians(degree_angle);
 
-	if (cos_theta > 0.999f)
+	if (cos_theta > 0.999f || glm::length2(axis) <= 0.0f || glm::abs(angle) < 0.00001)
 	{
-		return glm::quat(1.0f, 0.0f, 0.0f, 0.0f);	 // 단위 쿼터니언
-	}
-	if (cos_theta < -0.99f)
-	{
-		return glm::normalize(glm::angleAxis(glm::pi<float>(), glm::vec3(0.0f, 1.0f, 0.0f)));
+		return glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
 	}
 
-	return glm::normalize(glm::angleAxis(glm::acos(cos_theta), axis));
-
-	// if (cos_theta < -1.0 + 0.001)
-	//{
-	//	axis = glm::cross(glm::vec3(0.0, 0.0, 1.0), s);
-	//	if (glm::length2(axis) < 0.01)
-	//	{
-	//		axis = glm::cross(glm::vec3(1.0, 0.0, 0.0), s);
-	//	}
-	//	axis = glm::normalize(axis);
-	//	return glm::rotate(glm::mat4(1.0f), glm::radians(180.0f), glm::vec3(axis));
-	// }
-	// float ss = std::sqrt((1.0f + cos_theta) * 2.0f);
-	// float invs = 1.0f / ss;
-	// glm::quat quat(ss * 0.5f, axis.x * invs, axis.y * invs, axis.z * invs);
-
-	// return glm::toMat4(glm::normalize(quat));
+	return glm::normalize(glm::angleAxis(angle, glm::normalize(axis)));
 }
 
 const glm::vec3 GetTranslate(const glm::mat4& mat)
@@ -104,84 +88,102 @@ void Update_ApplyCCDIK(anim::Entity* start_entity,
 
 	const int ENDEFFECTOR_INDEX = 0;
 
-	// store init transform
-	std::vector<glm::quat> local_rotations;
-	std::vector<glm::mat4> local_translate_and_scale;
-	std::vector<glm::mat4> temp_world_transforms;
-	std::vector<anim::ArmatureComponent*> bones;
-	local_rotations.reserve(8);
-	temp_world_transforms.reserve(8);
+	class Chain
+	{
+	public:
+		Chain(anim::ArmatureComponent* a_bone) : bone(a_bone)
+		{
+			const auto& bone_local = bone->get_owner()->get_local();
+			const auto& bone_bindpose = bone->get_bindpose();
+			local = anim::TransformComponent(bone_bindpose * bone_local);
+			world = anim::TransformComponent(bone->get_owner()->get_world_transformation());
+		}
+
+	public:
+		const anim::ArmatureComponent* bone;
+		anim::TransformComponent local;
+		anim::TransformComponent world;
+	};
+
+	// init transform
+	std::vector<Chain> chains;
+	chains.reserve(8);
 	auto temp_entity = start_entity;
 	int end_index = 0;
 	do
 	{
-		auto* armature = temp_entity->get_component<anim::ArmatureComponent>();
-		if (armature == nullptr)
+		auto* bone = temp_entity->get_component<anim::ArmatureComponent>();
+		if (bone == nullptr)
 			break;
-
-		bones.emplace_back(armature);
-
-		temp_entity = temp_entity->get_mutable_parent();
+		chains.push_back(Chain(bone));
 		if (temp_entity == end_entity)
 		{
-			end_index = bones.size() - 1;
+			end_index = chains.size() - 1;
 		}
+
+		temp_entity = temp_entity->get_mutable_parent();
 	} while (temp_entity != nullptr);
-	std::reverse(bones.begin(), bones.end());
-
-	// calc world transform
-	auto get_world = [](const glm::mat4& parent_world_transform, anim::ArmatureComponent* armature,
-						const glm::mat4& local) { return parent_world_transform * armature->get_bindpose() * local; };
-
-	const int size = bones.size();
-	auto bone_local = glm::mat4(1.0f);
-	auto parent = glm::mat4(1.0f);
-	for (int i = 0; i < size; i++)
-	{
-		bone_local = bones[i]->get_owner()->get_local();
-		if (i > 0)
-			parent = temp_world_transforms[i - 1];
-		temp_world_transforms.emplace_back(get_world(parent, bones[i], bone_local));
-		auto [t, r, s] = anim::DecomposeTransform(bone_local);
-		local_rotations.emplace_back(glm::normalize(r));
-		local_translate_and_scale.emplace_back(glm::translate(glm::mat4(1.0f), t) * glm::scale(glm::mat4(1.0f), s));
-	}
-	const glm::vec3 target_vector = target_world_transform[3];
-	anim::LOG(glm::to_string(target_vector));
-	assert(size >= 2);
+	const anim::TransformComponent target(target_world_transform);
+	const glm::vec3 target_position = target.get_translation();
 
 	// calc CCDIK
-	std::vector<glm::quat> rotate_matrix(size, glm::quat());
-	std::reverse(temp_world_transforms.begin(), temp_world_transforms.end());
-	std::reverse(local_rotations.begin(), local_rotations.end());
-	std::reverse(bones.begin(), bones.end());
-	for (int32_t iter = 0; iter < 1000; iter++)
+	int iter = 0;
+	double distance = glm::distance(target.get_translation(), chains[ENDEFFECTOR_INDEX].world.get_translation());
+	while (distance > 1.0 && iter <= 100)
 	{
+		bool bIsUpdate = false;
 		for (int i = 1; i <= end_index; i++)
 		{
-			const glm::vec3 root_vector = GetTranslate(temp_world_transforms[i]);
-			const glm::vec3 end_effector_vector = GetTranslate(temp_world_transforms[ENDEFFECTOR_INDEX]);
+			Chain& current_chain = chains[i];
+			Chain& end_chain = chains[ENDEFFECTOR_INDEX];
 
-			const glm::vec3 root_to_end_effector = glm::normalize(end_effector_vector - root_vector);
-			const glm::vec3 root_to_target = glm::normalize(target_vector - root_vector);
+			// 1. calc axis, angle
+			const glm::vec3 pivot_position = current_chain.world.get_translation();
+			const glm::vec3 end_position = end_chain.world.get_translation();
 
-			// rotate_matrix[i] = glm::rotate(glm::mat4(1.0f), angle, cross);
-			rotate_matrix[i] =
-				CalcQuat(root_to_end_effector, root_to_target);	   // glm::rotate(glm::mat4(1.0f), angle, cross);
-			local_rotations[i] = glm::normalize(local_rotations[i] * rotate_matrix[i]);
-			glm::mat4 parent_world_transform = glm::mat4(1.0f);
-			for (int j = i; j >= 0; j--)
+			const glm::vec3 to_end = glm::normalize(end_position - pivot_position);
+			const glm::vec3 to_target = glm::normalize(target_position - pivot_position);
+
+			auto delta_rotation = CalcQuat(to_end, to_target);
+
+			if (delta_rotation == glm::quat())
+				continue;
+
+			// 2. rotate world, local transform
+			current_chain.world.set_quat(glm::normalize(delta_rotation * current_chain.world.get_quat()));
+			if (i < chains.size() - 1)
 			{
-				if (temp_world_transforms.size() > j + 1)
-					parent_world_transform = temp_world_transforms[j + 1];
-				temp_world_transforms[j] = get_world(parent_world_transform, bones[j], glm::toMat4(local_rotations[j]));
+				auto& parent = chains[i + 1];
+				const glm::mat4 relative_transform = parent.world.get_relative_transform(current_chain.world);
+				current_chain.local.set_transform(relative_transform);
 			}
+			else
+			{
+				current_chain.local.set_transform(current_chain.world);
+			}
+
+			// 3. update child world transform
+			glm::mat4 parent_world_transform = current_chain.world.get_mat4();
+			for (int j = i - 1; j >= 0; j--)
+			{
+				chains[j].world.set_transform(parent_world_transform * chains[j].local.get_mat4());
+				parent_world_transform = chains[j].world.get_mat4();
+			}
+			bIsUpdate = true;
 		}
+		if (bIsUpdate == false)
+		{
+			break;
+		}
+		iter++;
+		distance = glm::distance(target.get_translation(), chains[ENDEFFECTOR_INDEX].world.get_translation());
 	}
 
-	for (int i = 0; i < size; i++)
+	// update entity transform
+	for (int i = 0; i <= end_index; i++)
 	{
-		Update_EntityTransform(bones[i]->get_owner(), glm::toMat4(local_rotations[i]), b_is_push_history);
+		const auto diff = glm::inverse(chains[i].bone->get_bindpose()) * chains[i].local.get_mat4();
+		Update_EntityTransform(chains[i].bone->get_owner(), diff, b_is_push_history);
 	}
 }
 
