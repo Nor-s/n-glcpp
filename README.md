@@ -37,14 +37,6 @@
 - Export glTF, FBX
 - Mediapipe to Animation
 
-## **TODO**
-
-- Edit: IK
-- Fix camera movement
-- Ctrl + c, Ctrl + v
-  - Keyframe
-- Retargeting
-- Mediapipe Pose -> Mediapipe Holistic (Hands)
 
 ## **Build**
 
