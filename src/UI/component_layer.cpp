@@ -205,18 +205,40 @@ void ComponentLayer::draw_ik_control_component(anim::IKControlComponent& ik_comp
 		int item_size = parent_items.size();
 		for (int i = 0; i < item_size; i++)
 		{
-			bool isSelected = current_index == i;
-			if (ImGui::Selectable(parent_items[i], isSelected))
+			bool is_selected = current_index == i;
+			if (ImGui::Selectable(parent_items[i], is_selected))
 			{
 				current_index = i;
 			}
-			if (isSelected)
+			if (is_selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+	ik_component.set_end(parent_entity_items[current_index]);
+
+	static const char* const ik_type_list[] = {"FABRIK", "CCDIK"};
+	auto type = static_cast<int>(ik_component.get_ik_type());
+	ImGui::Text("IK type");
+	ImGui::SameLine();
+	if (ImGui::BeginCombo("##ik_type", ik_type_list[type]))
+	{
+		for (int i = 0; i < 2; i++)
+		{
+			bool is_selected = type == i;
+			if (ImGui::Selectable(ik_type_list[i], is_selected))
+			{
+				ik_component.set_ik_type(i);
+			}
+			if (is_selected)
 				ImGui::SetItemDefaultFocus();
 		}
 		ImGui::EndCombo();
 	}
 
-	ik_component.set_end(parent_entity_items[current_index]);
+	int max_iter = ik_component.get_max_iter();
+	ImGui::DragInt("max iter", &max_iter, 1, 1, 1000);
+	ik_component.set_max_iter(max_iter);
 }
 
 void ComponentLayer::draw_mesh(anim::MeshComponent* mesh)

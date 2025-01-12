@@ -129,7 +129,7 @@ void Update_ApplyCCDIK(anim::Entity* start_entity,
 	// calc CCDIK
 	int iter = 0;
 	double distance = glm::distance(target.get_translation(), chains[ENDEFFECTOR_INDEX].world.get_translation());
-	while (distance > 1.0 && iter <= 100)
+	while (distance > 1.0 && iter <= max_iter)
 	{
 		bool bIsUpdate = false;
 		for (int i = 1; i <= end_index; i++)
@@ -187,6 +187,132 @@ void Update_ApplyCCDIK(anim::Entity* start_entity,
 	}
 }
 
+void Update_ApplyFABRIK(anim::Entity* start_entity,
+						const anim::Entity* end_entity,
+						const glm::mat4& target_world_transform,
+						const uint32_t max_iter = 100u,
+						bool b_is_push_history = true)
+{
+	if (start_entity == nullptr || end_entity == nullptr || start_entity == end_entity)
+		return;
+
+	const int ENDEFFECTOR_INDEX = 1;
+
+	class Chain
+	{
+	public:
+		Chain(anim::ArmatureComponent* a_bone) : bone(a_bone), world(glm::vec3(0.0f)), distance(0.0f)
+		{
+			world = anim::TransformComponent(bone->get_owner()->get_world_transformation()).get_translation();
+			distance = glm::length(anim::TransformComponent(a_bone->get_bindpose()).get_translation());
+		}
+		Chain(const glm::vec3& a_world) : bone(nullptr), world(a_world), distance(0.0f)
+		{
+		}
+
+	public:
+		const anim::ArmatureComponent* bone;
+		glm::vec3 world;
+		float distance;
+	};
+
+	// init transform
+	std::vector<Chain> chains;
+	chains.reserve(8);
+	auto temp_entity = start_entity;
+	int end_index = -1;
+	const anim::TransformComponent target(target_world_transform);
+	const glm::vec3 target_position = target.get_translation();
+	chains.emplace_back(target_position);
+	do
+	{
+		auto* bone = temp_entity->get_component<anim::ArmatureComponent>();
+		if (bone == nullptr)
+			break;
+		chains.emplace_back(bone);
+		if (temp_entity == end_entity)
+		{
+			end_index = chains.size() - 1;
+		}
+
+		temp_entity = temp_entity->get_mutable_parent();
+	} while (temp_entity != nullptr && end_index == -1);
+	chains.emplace_back(chains.back().world);
+
+	// calc FABRIK
+	int iter = 0;
+	double distance = glm::distance(target_position, chains[ENDEFFECTOR_INDEX].world);
+	bool bIsUpdate = false;
+	while (distance > 1.0 && iter <= max_iter)
+	{
+		// first phase
+		for (int i = 1; i <= end_index; i++)
+		{
+			auto& current_pos = chains[i].world;
+			const auto& before_pos = chains[i - 1].world;
+			const float chain_distance = chains[i - 1].distance;
+
+			const glm::vec3 dir = glm::normalize(before_pos - current_pos);
+			current_pos = before_pos - chain_distance * dir;
+		}
+
+		// second phase
+		for (int i = end_index; i >= 1; i--)
+		{
+			auto& current_pos = chains[i].world;
+			const auto& before_pos = chains[i + 1].world;
+			const float chain_distance = chains[i].distance;
+
+			const glm::vec3 dir = glm::normalize(before_pos - current_pos);
+			current_pos = before_pos - chain_distance * dir;
+
+			if (i == end_index)
+			{
+				current_pos = before_pos;
+			}
+		}
+		bIsUpdate = true;
+
+		distance = glm::distance(target_position, chains[ENDEFFECTOR_INDEX].world);
+		iter++;
+	}
+
+	if (!bIsUpdate)
+	{
+		return;
+	}
+	// update entity transform
+	anim::TransformComponent parent_world_transform(glm::mat4(1.0f));
+	if (temp_entity != nullptr)
+	{
+		parent_world_transform = anim::TransformComponent(temp_entity->get_world_transformation());
+	}
+	for (int i = end_index; i > 1; i--)
+	{
+		// child
+		const glm::mat4 current_bind = parent_world_transform.get_mat4() * chains[i].bone->get_bindpose();
+		anim::TransformComponent current_world_transform = current_bind * chains[i].bone->get_owner()->get_local();
+		const glm::mat4 child_transform = current_world_transform.get_mat4() * chains[i - 1].bone->get_bindpose() *
+										  chains[i - 1].bone->get_owner()->get_local();
+
+		const glm::vec3 current = anim::TransformComponent(current_world_transform).get_translation();
+		const glm::vec3 to_target = chains[i - 1].world - current;
+		const glm::vec3 to_child = anim::TransformComponent(child_transform).get_translation() - current;
+		auto delta_rotation = CalcQuat(glm::normalize(to_child), glm::normalize(to_target));
+
+		current_world_transform.set_quat(glm::normalize(delta_rotation * current_world_transform.get_quat()));
+		const glm::mat4 relative_transform = parent_world_transform.get_relative_transform(current_world_transform);
+		const glm::mat4 diff = glm::inverse(chains[i].bone->get_bindpose()) * relative_transform;
+
+		Update_EntityTransform(chains[i].bone->get_owner(), diff, b_is_push_history);
+
+		// App::get_instance()->get_current_scene()->draw_debug(DebugInfo{glm::translate(glm::mat4(1.0f),
+		// chains[i].world)});
+
+		parent_world_transform.set_transform(current_world_transform);
+	}
+}
+
 void Update_EntitiesTransform(anim::Entity* entity, const glm::mat4& new_transform, bool b_is_push_history)
 {
 	auto& before_transform = entity->get_local();
@@ -200,9 +326,18 @@ void Update_EntitiesTransform(anim::Entity* entity, const glm::mat4& new_transfo
 		{
 			auto* start_entity = ik_component->get_owner();
 			auto* end_entity = ik_component->get_end();
-
-			Update_ApplyCCDIK(start_entity, end_entity, ik_component->get_world_transformation(),
-							  ik_component->get_max_iter(), b_is_push_history);
+			auto type = ik_component->get_ik_type();
+			auto max_iter = ik_component->get_max_iter();
+			auto target_transform = ik_component->get_world_transformation();
+			switch (type)
+			{
+				case anim::IKType::CCDIK:
+					Update_ApplyCCDIK(start_entity, end_entity, target_transform, max_iter, b_is_push_history);
+					break;
+				case anim::IKType::FABRIK:
+					Update_ApplyFABRIK(start_entity, end_entity, target_transform, max_iter, b_is_push_history);
+					break;
+			}
 			return;
 		}
 	}

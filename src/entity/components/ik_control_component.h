@@ -10,6 +10,12 @@ namespace anim
 {
 class Entity;
 
+enum class IKType : short
+{
+	FABRIK = 0,
+	CCDIK = 1,
+};
+
 class IKControlComponent : public ComponentBase<IKControlComponent>
 {
 public:
@@ -22,6 +28,10 @@ public:
 	{
 		return max_iter_;
 	}
+	const IKType get_ik_type() const
+	{
+		return ik_type_;
+	}
 
 	void set_max_iter(const uint32_t max_iter)
 	{
@@ -31,6 +41,11 @@ public:
 	{
 		b_is_snapping_ = b_is_snapping;
 	}
+	void set_ik_type(const short type)
+	{
+		ik_type_ = static_cast<IKType>(type);
+	}
+
 	bool is_snapping() const
 	{
 		return b_is_snapping_;
@@ -46,6 +61,7 @@ private:
 	mutable glm::mat4 world_transform_;
 	Entity* end_entity_{nullptr};
 	uint32_t max_iter_ = 100;
+	IKType ik_type_ = IKType::FABRIK;
 	bool b_is_snapping_ = false;
 };
 
