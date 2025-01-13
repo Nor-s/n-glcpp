@@ -6,6 +6,7 @@
 #include "transform_component.h"
 #include "transform_component.h"
 #include "transform_component.h"
+#include "transform_component.h"
 #include "../../util/utility.h"
 
 #include <iostream>
@@ -98,6 +99,23 @@ TransformComponent& TransformComponent::set_transform(const TransformComponent& 
 glm::mat4 TransformComponent::get_relative_transform(const TransformComponent& t) const
 {
 	return glm::inverse(get_mat4()) * t.transform;
+}
+
+glm::vec3 TransformComponent::get_local_point(const glm::vec3& world_point) const
+{
+	auto b = world_point - get_translation();
+	auto A = glm::mat3(get_mat4());
+	auto x = glm::inverse(A) * b;
+	if (glm::isnan(x.x))
+		x.x = 0.0;
+
+	if (glm::isnan(x.y))
+		x.y = 0.0;
+
+	if (glm::isnan(x.z))
+		x.z = 0.0;
+
+	return x;
 }
 
 }	 // namespace anim

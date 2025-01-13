@@ -28,6 +28,7 @@ public:
 	TransformComponent& set_transform(const TransformComponent& t);
 
 	glm::mat4 get_relative_transform(const TransformComponent& transfrom) const;
+	glm::vec3 get_local_point(const glm::vec3& world_point) const;
 
 private:
 	mutable glm::mat4 transform{1.0f};
